@@ -1,0 +1,17 @@
+C:\Users\Juan\Documents\Madame Pastel\backend\controllers\paymentController.js:8
+mercadopago.configure({
+            ^
+
+TypeError: mercadopago.configure is not a function
+    at Object.<anonymous> (C:\Users\Juan\Documents\Madame Pastel\backend\controllers\paymentController.js:8:13)
+    at Module._compile (node:internal/modules/cjs/loader:1504:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1588:10)
+    at Module.load (node:internal/modules/cjs/loader:1282:32)
+    at Module._load (node:internal/modules/cjs/loader:1098:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:315:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:215:24)
+    at Module.require (node:internal/modules/cjs/loader:1304:12)
+    at require (node:internal/modules/helpers:123:16)
+    at Object.<anonymous> (C:\Users\Juan\Documents\Madame Pastel\backend\routes\paymentRoutes.js:3:27)
+
+Node.js v22.5.1

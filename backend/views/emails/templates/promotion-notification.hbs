@@ -1,0 +1,47 @@
+<h2>¡{{promotionName}}!</h2>
+
+<p>Hola {{customerName}},</p>
+
+<p>Tenemos ofertas especiales para ti. No te pierdas estas deliciosas promociones:</p>
+
+<div style="text-align: center; margin: 30px 0;">
+  <img src="{{promotionImage}}" alt="{{promotionName}}" style="max-width: 100%; border-radius: 8px;">
+</div>
+
+<div class="highlight">
+  <h3>{{promotionName}}</h3>
+  <p>{{promotionDescription}}</p>
+  
+  {{#if discountPercentage}}
+  <p style="font-size: 18px; font-weight: 700; color: #d94f70;">¡{{discountPercentage}}% de descuento!</p>
+  {{/if}}
+  
+  <p><strong>Válido desde:</strong> {{startDate}} hasta {{endDate}}</p>
+</div>
+
+<h3>Productos en promoción:</h3>
+
+<div class="product-grid">
+  {{#each products}}
+  <div class="product-item">
+    <img src="{{image}}" alt="{{name}}">
+    <h4>{{name}}</h4>
+    {{#if originalPrice}}
+    <p>
+      <span style="text-decoration: line-through; color: #999;">${{originalPrice}}</span>
+      <span style="font-weight: 700; color: #d94f70;">${{discountedPrice}}</span>
+    </p>
+    {{else}}
+    <p><strong>${{price}}</strong></p>
+    {{/if}}
+  </div>
+  {{/each}}
+</div>
+
+<div style="text-align: center; margin: 30px 0;">
+  <a href="{{promotionLink}}" class="btn">Ver todas las ofertas</a>
+</div>
+
+<p style="font-size: 12px; color: #999; text-align: center;">
+  *Promoción válida hasta el {{endDate}} o hasta agotar stock. No acumulable con otras promociones.
+</p>
