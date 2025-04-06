@@ -2,8 +2,10 @@ services:
   - type: web
     name: madame-pastel-frontend
     env: static
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: frontend/build
+    rootDir: .
+    buildCommand: npm install && npm run build
+    staticPublishPath: build
+    dir: frontend
     envVars:
       - key: NODE_VERSION
         value: 18.0.0
