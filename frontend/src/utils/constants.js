@@ -2,15 +2,15 @@
 
 // Rutas de imágenes de marcadores de posición
 export const PLACEHOLDER_IMAGES = {
-  PRODUCT_SMALL: '/images/placeholders/product-300x300.jpg',
-  PRODUCT_LARGE: '/images/placeholders/product-600x400.jpg',
-  PROMO: '/images/placeholders/promo-600x400.jpg',
-  INSTAGRAM: '/images/placeholders/instagram-300x300.jpg',
-  ABOUT: '/images/placeholders/about-600x400.jpg'
+  PRODUCT_SMALL: '/api/placeholder/300/300',
+  PRODUCT_LARGE: '/api/placeholder/600/400',
+  PROMO: '/api/placeholder/600/400',
+  INSTAGRAM: '/api/placeholder/300/300',
+  ABOUT: '/api/placeholder/600/400'
 };
 
 // URLs para API
-export const API_URL = 'http://localhost:5000/api';
+export const API_URL = process.env.REACT_APP_API_URL || '/api';
 export const API_BASE_URL = API_URL;  // Para mantener compatibilidad con código existente
 export const API_ENDPOINTS = {
   PRODUCTS: `${API_URL}/products`,
@@ -41,7 +41,7 @@ export const CONTACT_INFO = {
   PHONE: '(+54) 9 223 551-2021',
   WHATSAPP: '+5492235512021',
   EMAIL: 'contacto@madamepastel.com',
-  ADDRESS: 'Buenos Aires 1234, Mar del Plata, Argentina',
+  ADDRESS: 'Vivorata 2162, Mar del Plata, Argentina',
   INSTAGRAM: 'https://www.instagram.com/madamepastelmdp',
   BUSINESS_HOURS: [
     { day: 'Lunes a Viernes', hours: '9:00 - 19:00' },

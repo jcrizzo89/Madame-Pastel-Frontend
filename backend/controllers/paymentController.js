@@ -39,7 +39,7 @@ exports.createPaymentPreference = async (req, res) => {
       },
       auto_return: 'approved',
       external_reference: orderId,
-      notification_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/payments/webhook`,
+      notification_url: `${process.env.BACKEND_URL || '${process.env.REACT_APP_API_URL}'}/api/payments/webhook`,
     };
     
     const preferenceClient = new Preference(client);

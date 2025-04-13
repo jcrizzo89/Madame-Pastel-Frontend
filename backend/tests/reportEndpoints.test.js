@@ -2,7 +2,7 @@ const axios = require('axios');
 const colors = require('colors');
 
 // Configuración
-const API_URL = 'http://localhost:5000/api';
+const API_URL = '${process.env.REACT_APP_API_URL}/api';
 const TOKEN = process.env.ADMIN_TOKEN || '';
 
 // Headers para autenticación
