@@ -1,0 +1,211 @@
+.report-filters {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: flex-end;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.filter-select,
+.search-input,
+.amount-input,
+.date-picker {
+  padding: 0.6rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background: #f8f8f8;
+  font-size: 0.9rem;
+  color: #333;
+  transition: all 0.2s;
+}
+
+.filter-select:focus,
+.search-input:focus,
+.amount-input:focus,
+.date-picker:focus {
+  border-color: #d94f70;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(217, 79, 112, 0.1);
+}
+
+.date-filter {
+  flex: 2;
+  min-width: 300px;
+}
+
+.date-inputs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.date-inputs .date-picker {
+  flex: 1;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.advanced-filters-toggle,
+.clear-filters-button {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.advanced-filters-toggle {
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  color: #555;
+}
+
+.advanced-filters-toggle:hover {
+  background: #e8e8e8;
+}
+
+.clear-filters-button {
+  background: #fff2f5;
+  border: 1px solid #ffd0d9;
+  color: #d94f70;
+}
+
+.clear-filters-button:hover {
+  background: #ffe6eb;
+}
+
+.predefined-periods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.period-button {
+  padding: 0.4rem 0.8rem;
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.period-button:hover {
+  background: #f0f0f0;
+  color: #d94f70;
+  border-color: #d94f70;
+}
+
+.advanced-filters {
+  background: #f9f9f9;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #eee;
+}
+
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #f8f8f8;
+  border-radius: 6px;
+  align-items: center;
+}
+
+.active-filters-label {
+  font-size: 0.85rem;
+  color: #666;
+  margin-right: 0.5rem;
+}
+
+.active-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.7rem;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  font-size: 0.85rem;
+}
+
+.active-filter span {
+  color: #333;
+}
+
+.active-filter button {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.active-filter button:hover {
+  color: #d94f70;
+}
+
+/* React-DatePicker Overrides */
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker__input-container {
+  width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filters-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .filter-actions {
+    margin-left: 0;
+    margin-top: 1rem;
+  }
+
+  .date-inputs {
+    flex-direction: column;
+  }
+}

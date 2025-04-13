@@ -1,0 +1,19 @@
+/* Estilos para el layout general de la aplicación */
+
+.main-content {
+  padding-top: 80px; /* Espacio para el header fijo */
+  min-height: calc(100vh - 280px); /* Altura mínima para el contenido principal (100vh - altura del header - altura del footer) */
+}
+
+/* Ajustes responsivos para el padding superior */
+@media (max-width: 992px) {
+  .main-content {
+    padding-top: 70px; /* Reducimos el padding para pantallas más pequeñas */
+  }
+}
+
+@media (max-width: 576px) {
+  .main-content {
+    padding-top: 65px; /* Aún menos padding para móviles */
+  }
+}
