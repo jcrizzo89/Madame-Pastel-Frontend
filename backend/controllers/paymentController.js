@@ -1,12 +1,12 @@
 const { MercadoPagoConfig, Preference, Payment } = require('mercadopago');
 const Order = require('../models/Order');
 const dotenv = require('dotenv');
+const { getMercadoPagoAccessToken, getWebhookUrl } = require('../config/paymentConfig');
 
 dotenv.config();
 
-// Configurar MercadoPago
-const client = new MercadoPagoConfig({ 
-  accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN || 'TEST-0000000000000000-000000-00000000000000000000000000000000-000000000'
+const createMercadoPagoClient = () => new MercadoPagoConfig({
+  accessToken: getMercadoPagoAccessToken()
 });
 
 // Crear preferencia de pago para MercadoPago
@@ -39,10 +39,10 @@ exports.createPaymentPreference = async (req, res) => {
       },
       auto_return: 'approved',
       external_reference: orderId,
-      notification_url: `${process.env.BACKEND_URL || '${process.env.REACT_APP_API_URL}'}/api/payments/webhook`,
+      notification_url: getWebhookUrl(),
     };
     
-    const preferenceClient = new Preference(client);
+    const preferenceClient = new Preference(createMercadoPagoClient());
     const response = await preferenceClient.create({ body: preference });
     
     // Actualizar orden con detalles de pago
@@ -130,7 +130,7 @@ exports.handleWebhook = async (req, res) => {
     
     if (query.topic === 'payment') {
       const paymentId = query.id;
-      const paymentClient = new Payment(client);
+      const paymentClient = new Payment(createMercadoPagoClient());
       const payment = await paymentClient.get({ id: paymentId });
       
       if (payment && payment.id) {

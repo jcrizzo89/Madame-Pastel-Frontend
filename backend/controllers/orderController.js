@@ -1,6 +1,7 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const Inventory = require('../models/Inventory');
+const mongoose = require('mongoose');
 
 // Obtener todos los pedidos
 exports.getOrders = async (req, res) => {
@@ -27,39 +28,93 @@ exports.getOrderById = async (req, res) => {
 
 // Crear un nuevo pedido
 exports.createOrder = async (req, res) => {
+  const reservedProducts = [];
+  let savedOrder;
   try {
-    const orderData = req.body;
-    
-    // Calcular el monto total si no se proporciona
-    if (!orderData.totalAmount) {
-      orderData.totalAmount = orderData.products.reduce(
-        (total, item) => total + (item.price * item.quantity), 0
-      );
+    const { customer, products, paymentMethod, pickupDate, notes } = req.body || {};
+    if (!customer || typeof customer.name !== 'string' || !customer.name.trim() ||
+        typeof customer.email !== 'string' || !/^\S+@\S+\.\S+$/.test(customer.email) ||
+        typeof customer.phone !== 'string' || !customer.phone.trim() ||
+        (customer.address != null && typeof customer.address !== 'string') ||
+        !Array.isArray(products) || products.length === 0 ||
+        !['mercadopago', 'transfer', 'cash', 'cashOnDelivery'].includes(paymentMethod) ||
+        !pickupDate || Number.isNaN(new Date(pickupDate).getTime())) {
+      return res.status(400).json({ message: 'Faltan datos válidos del cliente, productos, pago o fecha del pedido' });
     }
-    
-    const newOrder = new Order(orderData);
-    const savedOrder = await newOrder.save();
-    
-    // Actualizar el inventario
-    for (const item of orderData.products) {
-      const product = await Product.findById(item.productId);
-      if (product) {
-        // Actualizar stock del producto
-        product.stock -= item.quantity;
-        await product.save();
-        
-        // Actualizar inventario
-        const inventory = await Inventory.findOne({ product: item.productId });
-        if (inventory) {
-          inventory.currentStock -= item.quantity;
-          inventory.pendingProduction += item.quantity;
-          await inventory.save();
-        }
+
+    const quantities = new Map();
+    for (const item of products) {
+      const quantity = Number(item?.quantity);
+      const productId = String(item?.productId || '');
+      if (!mongoose.isValidObjectId(productId) || !Number.isInteger(quantity) || quantity < 1) {
+        return res.status(400).json({ message: 'Cada producto debe tener un identificador y una cantidad entera mayor a cero' });
+      }
+      quantities.set(productId, (quantities.get(productId) || 0) + quantity);
+    }
+
+    const catalogProducts = new Map();
+    for (const productId of quantities.keys()) {
+      const product = await Product.findById(productId);
+      if (!product) return res.status(400).json({ message: 'El pedido contiene un producto inexistente' });
+      const quantity = quantities.get(productId);
+      if (!Number.isFinite(product.price) || product.price < 0) {
+        return res.status(400).json({ message: 'El producto tiene un precio inválido' });
+      }
+      if (product.stock < quantity) {
+        return res.status(409).json({ message: `Stock insuficiente para ${product.name}` });
+      }
+      catalogProducts.set(productId, product);
+    }
+
+    const normalizedProducts = [...quantities].map(([productId, quantity]) => {
+      const product = catalogProducts.get(productId);
+      return { productId, name: product.name, price: product.price, quantity };
+    });
+    const totalAmount = normalizedProducts.reduce((total, item) => total + item.price * item.quantity, 0);
+
+    // Reservar stock con una condición atómica para no vender unidades ya agotadas.
+    for (const [productId, quantity] of quantities) {
+      const reserved = await Product.findOneAndUpdate(
+        { _id: productId, stock: { $gte: quantity } },
+        { $inc: { stock: -quantity } },
+        { new: true }
+      );
+      if (!reserved) {
+        await Promise.all(reservedProducts.map(entry => Product.updateOne(
+          { _id: entry.productId }, { $inc: { stock: entry.quantity } }
+        )));
+        return res.status(409).json({ message: `El stock cambió mientras se procesaba el pedido para ${catalogProducts.get(productId).name}` });
+      }
+      reservedProducts.push({ productId, quantity });
+    }
+
+    const order = new Order({
+      customer: { name: customer.name, email: customer.email, phone: customer.phone, address: customer.address },
+      products: normalizedProducts,
+      totalAmount,
+      paymentMethod,
+      pickupDate,
+      notes
+    });
+    savedOrder = await order.save();
+
+    for (const { productId, quantity } of reservedProducts) {
+      const inventory = await Inventory.findOne({ product: productId });
+      if (inventory) {
+        inventory.currentStock -= quantity;
+        inventory.pendingProduction += quantity;
+        await inventory.save();
       }
     }
     
     res.status(201).json(savedOrder);
   } catch (error) {
+    if (savedOrder?._id) await Order.deleteOne({ _id: savedOrder._id }).catch(() => {});
+    if (reservedProducts.length) {
+      await Promise.all(reservedProducts.map(entry => Product.updateOne(
+        { _id: entry.productId }, { $inc: { stock: entry.quantity } }
+      ))).catch(() => {});
+    }
     res.status(500).json({ message: 'Error al crear el pedido', error: error.message });
   }
 };

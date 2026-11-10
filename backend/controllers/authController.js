@@ -1,11 +1,12 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const { getJwtSecret } = require('../config/authConfig');
 
 // Configuración del JWT
 const generateToken = (user) => {
   return jwt.sign(
     { id: user._id, role: user.role },
-    process.env.JWT_SECRET || 'madamepastelsecret',
+    getJwtSecret(),
     { expiresIn: '1d' }
   );
 };
@@ -14,6 +15,12 @@ const generateToken = (user) => {
 exports.registerAdmin = async (req, res) => {
   try {
     const { username, email, password, role } = req.body;
+    if (!username || !email || !password || password.length < 12) {
+      return res.status(400).json({ message: 'Usuario, email y contraseña de al menos 12 caracteres son requeridos' });
+    }
+    if (role && !['admin', 'staff'].includes(role)) {
+      return res.status(400).json({ message: 'El rol debe ser admin o staff' });
+    }
 
     // Verificar si el usuario ya existe
     const userExists = await User.findOne({ $or: [{ email }, { username }] });
@@ -26,20 +33,16 @@ exports.registerAdmin = async (req, res) => {
       username,
       email,
       password,
-      role: role || 'admin'
+      role: role || 'staff'
     });
 
     const savedUser = await user.save();
-    
-    // Generar token
-    const token = generateToken(savedUser);
     
     res.status(201).json({
       _id: savedUser._id,
       username: savedUser.username,
       email: savedUser.email,
-      role: savedUser.role,
-      token
+      role: savedUser.role
     });
   } catch (error) {
     console.error('Error al registrar administrador:', error);
@@ -54,7 +57,7 @@ exports.loginAdmin = async (req, res) => {
     
     // Buscar usuario por email
     const user = await User.findOne({ email });
-    if (!user) {
+    if (!user || !user.active) {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
     
@@ -97,10 +100,10 @@ exports.protect = async (req, res, next) => {
   }
   
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'madamepastelsecret');
+    const decoded = jwt.verify(token, getJwtSecret());
     
     const user = await User.findById(decoded.id).select('-password');
-    if (!user) {
+    if (!user || !user.active) {
       return res.status(401).json({ message: 'Token inválido' });
     }
     
@@ -114,7 +117,7 @@ exports.protect = async (req, res, next) => {
 
 // Verificar rol de administrador
 exports.isAdmin = (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
+  if (req.user && ['admin', 'superadmin'].includes(req.user.role)) {
     next();
   } else {
     res.status(403).json({ message: 'Acceso denegado, se requiere rol de administrador' });

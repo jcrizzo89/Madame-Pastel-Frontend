@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { FaShoppingCart, FaMinus, FaPlus, FaArrowLeft } from 'react-icons/fa';
+import { API_URL } from '../utils/constants';
 import '../styles/ProductDetailPage.css';
 
 const ProductDetailPage = () => {
@@ -12,158 +14,28 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        setLoading(true);
-        
-        let foundProduct = null;
-        
-        // 1. Intenta obtener el producto de la API real
-        try {
-          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/products/${id}`);
-          if (response.ok) {
-            const data = await response.json();
-            foundProduct = data;
-          }
-        } catch (apiError) {
-          console.log('API no disponible o error de conexión', apiError);
-        }
-        
-        // 2. Si no encontramos el producto en la API, usamos datos de muestra extendidos
-        if (!foundProduct) {
-          // Datos de muestra extendidos para desarrollo y pruebas
-          const sampleProducts = [
-            {
-              _id: '1',
-              id: '1',
-              name: 'Torta de Chocolate',
-              description: 'Deliciosa torta de chocolate con ganache. Elaborada con chocolate belga de la más alta calidad, rellena con dulce de leche y decorada con ganache de chocolate. Ideal para celebraciones y ocasiones especiales.',
-              price: 4500,
-              image: '/images/placeholders/product-600x400.jpg',
-              category: 'tortas',
-              ingredients: ['Chocolate', 'Harina', 'Azúcar', 'Huevos', 'Manteca', 'Dulce de leche'],
-              preparationTime: 48, // horas
-              allergens: ['Gluten', 'Lácteos', 'Huevos']
-            },
-            {
-              _id: '2',
-              id: '2',
-              name: 'Cupcakes de Vainilla',
-              description: 'Pack de 6 cupcakes de vainilla con frosting. Esponjosos cupcakes de vainilla decorados con frosting de manteca y chocolate blanco. Perfectos para cualquier celebración.',
-              price: 2500,
-              image: '/images/placeholders/product-600x400.jpg',
-              category: 'cupcakes',
-              ingredients: ['Harina', 'Azúcar', 'Huevos', 'Manteca', 'Vainilla', 'Chocolate blanco'],
-              preparationTime: 24, // horas
-              allergens: ['Gluten', 'Lácteos', 'Huevos']
-            },
-            {
-              _id: '3',
-              id: '3',
-              name: 'Cookies Artesanales',
-              description: 'Deliciosas cookies artesanales con chips de chocolate. Horneadas a la perfección, con un exterior crujiente y un interior suave y húmedo.',
-              price: 2500,
-              image: '/images/placeholders/product-600x400.jpg',
-              category: 'cookies',
-              ingredients: ['Harina', 'Azúcar', 'Huevos', 'Manteca', 'Chocolate'],
-              preparationTime: 24, // horas
-              allergens: ['Gluten', 'Lácteos', 'Huevos']
-            },
-            {
-              _id: '4',
-              id: '4',
-              name: 'Cheesecake',
-              description: 'Cremoso cheesecake con base de galletas y cobertura de frutos rojos. Una combinación perfecta de sabores y texturas.',
-              price: 4800,
-              image: '/images/placeholders/product-600x400.jpg',
-              category: 'postres',
-              ingredients: ['Queso crema', 'Azúcar', 'Galletas', 'Manteca', 'Frutos rojos'],
-              preparationTime: 24, // horas
-              allergens: ['Gluten', 'Lácteos']
-            },
-            {
-              _id: '67f2bf1df7ead674618cbaab',
-              id: '67f2bf1df7ead674618cbaab',
-              name: 'Huevo Kinder',
-              description: 'Huevo Sorpresa de chocolate estilo Kinder para Pascuas, elaborado artesanalmente con los mejores ingredientes.',
-              price: 20000,
-              image: '/api/placeholder/400/400',
-              category: 'Pascuas',
-              ingredients: ['Chocolate', 'Azúcar', 'Sorpresa interior'],
-              preparationTime: 24, // horas
-              allergens: ['Gluten', 'Lácteos']
-            }
-          ];
-          
-          // Busca por _id o id para mayor compatibilidad
-          foundProduct = sampleProducts.find(p => 
-            p._id === id || p.id === id || 
-            p._id?.toString() === id || p.id?.toString() === id
-          );
-          
-          // 3. Si aún no encontramos el producto, creamos uno genérico basado en el ID
-          if (!foundProduct && id) {
-            // Extraer posible nombre del producto del ID
-            let productName = 'Producto';
-            try {
-              // Intenta extraer un nombre del ID (asumiendo que podría contener información legible)
-              if (id.includes('-')) {
-                const namePart = id.split('-').pop();
-                if (namePart && namePart.length > 3) {
-                  productName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-                }
-              }
-            } catch (e) {
-              console.log('No se pudo extraer un nombre del ID', e);
-            }
-            
-            // Crear un producto genérico usando el ID
-            foundProduct = {
-              _id: id,
-              id: id,
-              name: 'Huevo Kinder',
-              description: 'Huevo Sorpresa de chocolate estilo Kinder para Pascuas, elaborado artesanalmente con los mejores ingredientes.',
-              price: 20000,
-              image: '/api/placeholder/400/400',
-              category: 'Pascuas',
-              ingredients: ['Chocolate', 'Azúcar', 'Sorpresa interior'],
-              preparationTime: 24,
-              allergens: ['Lácteos']
-            };
-          }
-        }
-        
-        setProduct(foundProduct);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching product:', error);
-        setLoading(false);
-      }
+    let active = true;
+    axios
+      .get(`${API_URL}/products/${id}`)
+      .then(({ data }) => {
+        if (active) setProduct(data);
+      })
+      .catch(() => {
+        if (active) setProduct(null);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
     };
-    
-    fetchProduct();
   }, [id]);
-
-  const handleQuantityChange = (value) => {
-    if (quantity + value >= 1) {
-      setQuantity(quantity + value);
-    }
-  };
-
-  const handleAddToCart = () => {
-    if (product) {
-      addToCart({ ...product, quantity });
-      alert('¡Producto agregado al carrito!');
-    }
-  };
 
   if (loading) {
     return (
       <div className="product-detail-page">
         <div className="container">
-          <div className="loading-container">
-            <p className="loading-message">Cargando producto...</p>
-          </div>
+          <p className="loading-message">Cargando producto...</p>
         </div>
       </div>
     );
@@ -172,104 +44,175 @@ const ProductDetailPage = () => {
   if (!product) {
     return (
       <div className="product-detail-page">
-        <div className="container">
-          <div className="not-found-container">
-            <h2>Producto no encontrado</h2>
-            <p>Lo sentimos, el producto que buscas no existe o no está disponible.</p>
-            <Link to="/productos" className="btn">
-              <FaArrowLeft className="icon-left" /> Volver a productos
-            </Link>
-          </div>
+        <div className="container not-found-container">
+          <h2>Producto no encontrado</h2>
+          <p>No encontramos ese producto en el catálogo disponible.</p>
+          <Link to="/productos" className="btn">
+            <FaArrowLeft className="icon-left" /> Volver al catálogo
+          </Link>
         </div>
       </div>
     );
   }
 
+  const rawPrice = Number(product.price);
+  const isOnPromotion = Boolean(
+    product.isPromotion || (product.seasonalPromotion && product.isPromotionActive)
+  );
+  const discountedPrice =
+    isOnPromotion && product.discountPercentage > 0 && Number.isFinite(rawPrice)
+      ? rawPrice * (1 - product.discountPercentage / 100)
+      : rawPrice;
+
+  const formatPrice = (value) => {
+    return Number(value || 0).toLocaleString('es-AR', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    });
+  };
+
+  const handleAddToCart = () => {
+    addToCart({
+      ...product,
+      id: product._id || product.id,
+      price: discountedPrice,
+      originalPrice: isOnPromotion ? rawPrice : undefined,
+      isOnPromotion,
+      quantity
+    });
+  };
+
   return (
     <div className="product-detail-page">
       <div className="container">
-        <div className="breadcrumb">
+        <nav className="breadcrumb" aria-label="Navegación secundaria">
           <Link to="/">Inicio</Link> / <Link to="/productos">Productos</Link> / <span>{product.name}</span>
-        </div>
+        </nav>
 
         <div className="product-detail-container">
           <div className="product-image-container">
-            {/* 
-              Para imágenes de API, normalmente se usan como background-image en CSS 
-              en lugar de como src de img para mejor control
-            */}
-            <div 
+            <img
               className="product-image-bg"
-              style={{ 
-                backgroundImage: `url(${product.image || '/api/placeholder/600/600'})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                width: '100%',
-                height: '100%',
-                position: 'absolute',
-                top: 0,
-                left: 0
+              src={product.image || '/logo-madame-pastel.jpeg'}
+              alt={product.name}
+              loading="lazy"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/logo-madame-pastel.jpeg';
               }}
-            ></div>
+            />
+            {isOnPromotion && (
+              <span className="product-badge" style={{ position: 'absolute', top: '15px', right: '15px' }}>
+                {product.discountPercentage || 0}% OFF
+              </span>
+            )}
           </div>
 
           <div className="product-info">
             <h1 className="product-name">{product.name}</h1>
-            <div className="product-category">{product.category}</div>
-            <p className="product-price">${product.price.toLocaleString()}</p>
+            <div className="product-category">
+              {product.category}
+              {product.illustrativeImage && ' · Imagen ilustrativa'}
+            </div>
+
+            <div className="product-price">
+              {Number.isFinite(rawPrice) ? (
+                isOnPromotion ? (
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
+                    <span className="original-price" style={{ textDecoration: 'line-through', color: '#888', fontSize: '1.1rem' }}>
+                      ${formatPrice(rawPrice)}
+                    </span>
+                    <span className="discount-price" style={{ color: 'var(--accent-color, #c94860)', fontSize: '1.6rem', fontWeight: 700 }}>
+                      ${formatPrice(discountedPrice)}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="current-price" style={{ fontSize: '1.6rem', fontWeight: 700 }}>
+                    ${formatPrice(rawPrice)}
+                  </span>
+                )
+              ) : (
+                'Precio a consultar'
+              )}
+            </div>
+
             <div className="product-description">{product.description}</div>
 
-            <div className="product-meta">
-              <div className="meta-item">
-                <h3>Ingredientes</h3>
-                <ul className="ingredients-list">
-                  {product.ingredients && product.ingredients.map((ingredient, index) => (
-                    <li key={index}>{ingredient}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="meta-item">
-                <h3>Información</h3>
-                <p>
-                  <strong>Tiempo de preparación:</strong> {product.preparationTime} horas
-                </p>
-                {product.allergens && (
-                  <div>
-                    <strong>Alérgenos:</strong> {product.allergens.join(', ')}
+            {(product.ingredients?.length > 0 || product.allergens?.length > 0 || product.preparationTime) && (
+              <div className="product-meta">
+                {product.ingredients?.length > 0 && (
+                  <div className="meta-item">
+                    <h3>Ingredientes</h3>
+                    <ul className="ingredients-list">
+                      {product.ingredients.map((ingredient, index) => (
+                        <li key={`${ingredient}-${index}`}>{ingredient}</li>
+                      ))}
+                    </ul>
                   </div>
                 )}
+                <div className="meta-item">
+                  {product.preparationTime && (
+                    <p>
+                      <strong>Preparación:</strong> {product.preparationTime} horas
+                    </p>
+                  )}
+                  {product.allergens?.length > 0 && (
+                    <p>
+                      <strong>Alérgenos:</strong> {product.allergens.join(', ')}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
-            <div className="add-to-cart-container">
-              <div className="quantity-selector">
-                <button 
-                  className="quantity-btn"
-                  onClick={() => handleQuantityChange(-1)}
-                  disabled={quantity <= 1}
+            {product.madeToOrder ? (
+              <div className="add-to-cart-container">
+                <Link
+                  className="btn add-to-cart-btn"
+                  to={`/armar-torta?size=${encodeURIComponent(product.customCakeSizeId || '')}`}
                 >
-                  <FaMinus />
-                </button>
-                <span className="quantity">{quantity}</span>
-                <button 
-                  className="quantity-btn"
-                  onClick={() => handleQuantityChange(1)}
+                  Personalizar y pedir por WhatsApp
+                </Link>
+              </div>
+            ) : (
+              <div className="add-to-cart-container">
+                <div className="quantity-selector">
+                  <button
+                    type="button"
+                    className="quantity-btn"
+                    onClick={() => setQuantity((value) => Math.max(1, value - 1))}
+                    disabled={quantity <= 1}
+                    aria-label="Restar una unidad"
+                  >
+                    <FaMinus aria-hidden="true" />
+                  </button>
+                  <span className="quantity" aria-live="polite">{quantity}</span>
+                  <button
+                    type="button"
+                    className="quantity-btn"
+                    onClick={() => setQuantity((value) => value + 1)}
+                    aria-label="Sumar una unidad"
+                  >
+                    <FaPlus aria-hidden="true" />
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  className="btn add-to-cart-btn"
+                  onClick={handleAddToCart}
+                  disabled={product.stock <= 0}
                 >
-                  <FaPlus />
+                  <FaShoppingCart className="icon-left" aria-hidden="true" />{' '}
+                  {product.stock <= 0 ? 'Sin stock' : 'Agregar al carrito'}
                 </button>
               </div>
-
-              <button className="btn add-to-cart-btn" onClick={handleAddToCart}>
-                <FaShoppingCart className="icon-left" /> Agregar al carrito
-              </button>
-            </div>
+            )}
           </div>
         </div>
 
         <div className="back-navigation">
           <Link to="/productos" className="back-link">
-            <FaArrowLeft className="icon-left" /> Volver a productos
+            <FaArrowLeft className="icon-left" aria-hidden="true" /> Volver al catálogo
           </Link>
         </div>
       </div>

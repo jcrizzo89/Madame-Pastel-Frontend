@@ -16,14 +16,24 @@ const Footer = () => {
             <p>{config?.siteSettings?.homepageDescription || 'Deliciosas creaciones artesanales para endulzar tus momentos especiales.'}</p>
             <div className="social-links">
               {config?.socialLinks?.instagram && (
-                <a href={config.socialLinks.instagram} target="_blank" rel="noopener noreferrer">
-                  <FaInstagram />
+                <a
+                  href={config.socialLinks.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Seguinos en Instagram"
+                >
+                  <FaInstagram aria-hidden="true" />
                 </a>
               )}
               
               {config?.socialLinks?.whatsapp && (
-                <a href={`https://wa.me/${config.socialLinks.whatsapp}`} target="_blank" rel="noopener noreferrer">
-                  <FaWhatsapp />
+                <a
+                  href={`https://wa.me/${String(config.socialLinks.whatsapp).replace(/\D/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Escribinos por WhatsApp"
+                >
+                  <FaWhatsapp aria-hidden="true" />
                 </a>
               )}
             </div>
@@ -34,6 +44,7 @@ const Footer = () => {
             <ul className="footer-links">
               <li><Link to="/">Inicio</Link></li>
               <li><Link to="/productos">Productos</Link></li>
+              <li><Link to="/armar-torta">Armá tu torta</Link></li>
               <li><Link to="/promociones">Promociones</Link></li>
               <li><Link to="/contacto">Contacto</Link></li>
             </ul>
@@ -44,21 +55,21 @@ const Footer = () => {
             <ul className="contact-list">
               {config?.contactInfo?.address && (
                 <li>
-                  <FaMapMarkerAlt />
+                  <FaMapMarkerAlt aria-hidden="true" />
                   <span>{config.contactInfo.address}</span>
                 </li>
               )}
               
-              {config?.contactInfo?.phone || config?.socialLinks?.whatsapp && (
+              {(config?.contactInfo?.phone || config?.socialLinks?.whatsapp) && (
                 <li>
-                  <FaWhatsapp />
+                  <FaWhatsapp aria-hidden="true" />
                   <span>{config?.contactInfo?.phone || `+${config?.socialLinks?.whatsapp}`}</span>
                 </li>
               )}
               
               {config?.contactInfo?.email && (
                 <li>
-                  <FaEnvelope />
+                  <FaEnvelope aria-hidden="true" />
                   <span>{config.contactInfo.email}</span>
                 </li>
               )}

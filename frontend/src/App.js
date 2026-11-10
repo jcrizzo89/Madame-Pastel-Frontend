@@ -20,10 +20,11 @@ import CheckoutSuccessPage from './pages/CheckoutSuccessPage';
 import CheckoutFailurePage from './pages/CheckoutFailurePage';
 import CheckoutPendingPage from './pages/CheckoutPendingPage';
 import ContactPage from './pages/ContactPage';
+import CustomCakePage from './pages/CustomCakePage';
 import NotFoundPage from './pages/NotFoundPage';
 
-// Importación de rutas de administrador
-import AdminRoutes from './routes/AdminRoutes';
+// Importación diferida (lazy load) de rutas de administrador para no sobrecargar el bundle de la tienda pública
+const AdminRoutes = React.lazy(() => import('./routes/AdminRoutes'));
 
 function App() {
   return (
@@ -33,8 +34,29 @@ function App() {
           <div className="App">
             {/* Contenido principal del sitio (solo se muestra si no estamos en rutas de admin) */}
             <Routes>
-              {/* Rutas del administrador */}
-              <Route path="/admin/*" element={<AdminRoutes />} />
+              {/* Rutas del administrador con carga diferida */}
+              <Route
+                path="/admin/*"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div
+                        style={{
+                          minHeight: '60vh',
+                          display: 'grid',
+                          placeItems: 'center',
+                          color: 'var(--text-color)',
+                          fontSize: '1rem'
+                        }}
+                      >
+                        Cargando panel de administración...
+                      </div>
+                    }
+                  >
+                    <AdminRoutes />
+                  </React.Suspense>
+                }
+              />
               
               {/* Rutas públicas del sitio */}
               <Route path="/*" element={
@@ -46,6 +68,7 @@ function App() {
                       <Route path="/productos" element={<ProductsPage />} />
                       <Route path="/productos/:id" element={<ProductDetailPage />} />
                       <Route path="/promociones" element={<PromotionsPage />} />
+                      <Route path="/armar-torta" element={<CustomCakePage />} />
                       <Route path="/carrito" element={<CartPage />} />
                       <Route path="/checkout" element={<CheckoutPage />} />
                       <Route path="/checkout/success" element={<CheckoutSuccessPage />} />

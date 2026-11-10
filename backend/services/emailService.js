@@ -1,11 +1,15 @@
 const { createTransporter } = require('../config/emailConfig');
-const config = require('../config/config');
 
 // Servicio de email para la aplicación
 class EmailService {
   constructor() {
-    this.transporter = createTransporter();
-    this.defaultEmail = process.env.EMAIL_FROM || 'Madame Pastel <madamepastelmdp@gmail.com>';
+    this.transporterPromise = null;
+    this.defaultEmail = process.env.EMAIL_FROM;
+  }
+
+  getTransporter() {
+    if (!this.transporterPromise) this.transporterPromise = createTransporter();
+    return this.transporterPromise;
   }
   
   // Función para enviar un correo genérico
@@ -30,7 +34,8 @@ class EmailService {
         },
       };
       
-      const info = await this.transporter.sendMail(mailOptions);
+      const transporter = await this.getTransporter();
+      const info = await transporter.sendMail(mailOptions);
       console.log('Email sent:', info.messageId);
       return { success: true, messageId: info.messageId };
     } catch (error) {

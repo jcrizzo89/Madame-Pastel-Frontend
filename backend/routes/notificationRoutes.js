@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const emailService = require('../services/emailService');
-const auth = require('../middleware/auth');
+const { protect, isAdmin } = require('../middleware/authMiddleware');
 const Product = require('../models/Product');
 const User = require('../models/User');
 const Order = require('../models/Order');
 
 // Ruta para enviar un correo de prueba (sólo accesible por admin)
-router.post('/test-email', auth, async (req, res) => {
+router.post('/test-email', protect, isAdmin, async (req, res) => {
   try {
     const { email, template } = req.body;
     
@@ -83,7 +83,7 @@ router.post('/test-email', auth, async (req, res) => {
 });
 
 // Ruta para enviar notificación de promoción a todos los usuarios o un segmento
-router.post('/send-promotion', auth, async (req, res) => {
+router.post('/send-promotion', protect, isAdmin, async (req, res) => {
   try {
     const { promotionId, userSegment } = req.body;
     
@@ -171,7 +171,7 @@ router.post('/send-promotion', auth, async (req, res) => {
 });
 
 // Ruta para enviar notificación de orden (usado cuando se crea o actualiza un pedido)
-router.post('/order-notification', auth, async (req, res) => {
+router.post('/order-notification', protect, isAdmin, async (req, res) => {
   try {
     const { orderId, notificationType } = req.body;
     

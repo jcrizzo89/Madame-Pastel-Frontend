@@ -18,6 +18,7 @@ const ProductsPage = () => {
     image: '',
     category: '',
     stock: '',
+    madeToOrder: false,
     isPromotion: false,
     discountPercentage: '0',
     featured: false,
@@ -76,6 +77,7 @@ const ProductsPage = () => {
       image: '',
       category: categories.length > 0 ? categories[0] : '',
       stock: '',
+      madeToOrder: false,
       isPromotion: false,
       discountPercentage: '0',
       featured: false,
@@ -99,12 +101,13 @@ const ProductsPage = () => {
         image: product.image || '',
         category: product.category || '',
         stock: product.stock ? product.stock.toString() : '0',
+        madeToOrder: Boolean(product.madeToOrder),
         isPromotion: Boolean(product.isPromotion),
         discountPercentage: product.discountPercentage ? product.discountPercentage.toString() : '0',
         featured: Boolean(product.featured),
         ingredients: product.ingredients ? product.ingredients.join(', ') : '',
         allergens: product.allergens ? product.allergens.join(', ') : '',
-        preparationTime: product.preparationTime ? product.preparationTime.toString() : '24'
+        preparationTime: product.preparationTime != null ? product.preparationTime.toString() : '24'
       });
       setFormMode('edit');
       setShowModal(true);
@@ -304,8 +307,8 @@ const ProductsPage = () => {
                   {formatCurrency(product.price)}
                 </p>
                 <p className="admin-product-stock">
-                  Stock: <span className={product.stock > 0 ? 'in-stock' : 'out-of-stock'}>
-                    {product.stock > 0 ? product.stock : 'Agotado'}
+                  Stock: <span className={product.stock > 0 || product.madeToOrder ? 'in-stock' : 'out-of-stock'}>
+                    {product.madeToOrder ? 'A pedido' : product.stock > 0 ? product.stock : 'Agotado'}
                   </span>
                 </p>
               </div>
@@ -469,6 +472,14 @@ const ProductsPage = () => {
                       onChange={handleInputChange}
                     />
                     <label htmlFor="featured">Producto destacado</label>
+                  </div>
+                </div>
+
+                <div className="admin-form-group">
+                  <label>Disponibilidad</label>
+                  <div className="admin-form-checkbox">
+                    <input type="checkbox" id="madeToOrder" name="madeToOrder" checked={formData.madeToOrder} onChange={handleInputChange} />
+                    <label htmlFor="madeToOrder">Se prepara a pedido</label>
                   </div>
                 </div>
                 

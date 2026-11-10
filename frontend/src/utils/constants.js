@@ -10,7 +10,13 @@ export const PLACEHOLDER_IMAGES = {
 };
 
 // URLs para API
-export const API_URL = process.env.REACT_APP_API_URL || '/api';
+export const resolveApiUrl = (baseUrl) => {
+  const base = String(baseUrl || '').trim().replace(/\/+$/, '');
+  if (!base) return '/api';
+  return /\/api$/i.test(base) ? base : `${base}/api`;
+};
+
+export const API_URL = resolveApiUrl(process.env.REACT_APP_API_URL);
 export const API_BASE_URL = API_URL;  // Para mantener compatibilidad con código existente
 export const API_ENDPOINTS = {
   PRODUCTS: `${API_URL}/products`,
@@ -40,8 +46,8 @@ export const API_ENDPOINTS = {
 export const CONTACT_INFO = {
   PHONE: '(+54) 9 223 551-2021',
   WHATSAPP: '+5492235512021',
-  EMAIL: 'contacto@madamepastel.com',
-  ADDRESS: 'Vivorata 2162, Mar del Plata, Argentina',
+  EMAIL: '',
+  ADDRESS: '',
   INSTAGRAM: 'https://www.instagram.com/madamepastelmdp',
   BUSINESS_HOURS: [
     { day: 'Lunes a Viernes', hours: '9:00 - 19:00' },

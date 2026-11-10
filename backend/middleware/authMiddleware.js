@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { getJwtSecret } = require('../config/authConfig');
 
 // Middleware para verificar si el usuario está autenticado
 const protect = async (req, res, next) => {
@@ -10,10 +11,10 @@ const protect = async (req, res, next) => {
       return res.status(401).json({ message: 'Autenticación requerida' });
     }
     
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'madamepastelsecret');
+    const decoded = jwt.verify(token, getJwtSecret());
     const user = await User.findById(decoded.id).select('-password');
     
-    if (!user) {
+    if (!user || !user.active) {
       return res.status(401).json({ message: 'Usuario no encontrado' });
     }
     
@@ -28,8 +29,22 @@ const protect = async (req, res, next) => {
 
 // Middleware para verificar si el usuario es administrador
 const admin = (req, res, next) => {
-  if (req.user.role !== 'admin') {
+  if (!['admin', 'superadmin'].includes(req.user.role)) {
     return res.status(403).json({ message: 'Acceso denegado. Se requieren permisos de administrador' });
+  }
+  next();
+};
+
+const superAdmin = (req, res, next) => {
+  if (req.user.role !== 'superadmin') {
+    return res.status(403).json({ message: 'Acceso denegado. Se requieren permisos de superadmin' });
+  }
+  next();
+};
+
+const staffOrAdmin = (req, res, next) => {
+  if (!['superadmin', 'admin', 'staff'].includes(req.user.role)) {
+    return res.status(403).json({ message: 'Acceso denegado' });
   }
   next();
 };
@@ -38,5 +53,7 @@ const admin = (req, res, next) => {
 const authMiddleware = protect;
 const adminMiddleware = admin;
 const isAdmin = admin;
+const isSuperAdmin = superAdmin;
+const isStaffOrAdmin = staffOrAdmin;
 
-module.exports = { protect, admin, authMiddleware, adminMiddleware, isAdmin };
+module.exports = { protect, admin, superAdmin, staffOrAdmin, authMiddleware, adminMiddleware, isAdmin, isSuperAdmin, isStaffOrAdmin };

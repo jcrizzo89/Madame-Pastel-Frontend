@@ -1,0 +1,25 @@
+.admin-team-page { max-width: 1120px; margin: 0 auto; padding: 2rem; color: #34252a; }
+.admin-team-page .admin-page-header { margin-bottom: 1.5rem; }
+.admin-team-page .admin-page-header h1 { margin-bottom: .35rem; font-size: 1.75rem; }
+.admin-team-page .admin-page-header p { margin: 0; color: #68585d; }
+.team-create-section, .team-list-section { margin: 1.25rem 0; padding: 1.25rem; background: #fff; border: 1px solid #eadde0; border-radius: 10px; }
+.team-create-section h2, .team-list-section h2 { margin: 0 0 1rem; font-size: 1.15rem; }
+.team-create-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; align-items: end; }
+.team-create-form label { display: grid; gap: .4rem; font-weight: 600; font-size: .9rem; }
+.team-create-form input, .team-create-form select, .team-table select { min-height: 42px; padding: .55rem .65rem; border: 1px solid #cdbdc2; border-radius: 6px; background: #fff; color: #34252a; font: inherit; }
+.team-create-form small { color: #68585d; font-weight: 400; }
+.team-create-form button, .team-actions button { min-height: 40px; padding: .5rem .8rem; border: 0; border-radius: 6px; background: #ad4057; color: white; font: inherit; font-weight: 600; cursor: pointer; }
+.team-create-form button:disabled { opacity: .65; cursor: wait; }
+.team-create-form input:focus-visible, .team-create-form select:focus-visible, .team-create-form button:focus-visible, .team-actions button:focus-visible, .team-table select:focus-visible { outline: 3px solid #8e3649; outline-offset: 2px; }
+.team-table-wrap { overflow-x: auto; }
+.team-table { width: 100%; border-collapse: collapse; text-align: left; }
+.team-table th, .team-table td { padding: .75rem; border-bottom: 1px solid #eadde0; vertical-align: middle; }
+.team-table th { color: #59464c; font-size: .82rem; }
+.team-status { font-size: .85rem; font-weight: 600; }
+.team-status.is-active { color: #246b4e; }
+.team-status.is-inactive { color: #8c3e49; }
+.team-actions { display: flex; gap: .5rem; }
+.team-actions .team-delete { background: #f5e9ec; color: #7e263c; }
+.team-feedback { padding: .75rem 1rem; border-radius: 6px; }
+.team-error { background: #fae8e8; color: #852f3a; }
+@media (max-width: 700px) { .admin-team-page { padding: 1rem; } .team-create-form { grid-template-columns: 1fr; } .team-actions { flex-wrap: wrap; } }

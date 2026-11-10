@@ -67,7 +67,7 @@ const NotificationsPage = () => {
     try {
       setLoading(true);
       
-      const response = await axios.post(
+      await axios.post(
         `${API_URL}/notifications/test-email`,
         {
           email: testEmail,
@@ -135,7 +135,7 @@ const NotificationsPage = () => {
     try {
       setLoading(true);
       
-      const response = await axios.post(
+      await axios.post(
         `${API_URL}/notifications/order-notification`,
         {
           orderId,

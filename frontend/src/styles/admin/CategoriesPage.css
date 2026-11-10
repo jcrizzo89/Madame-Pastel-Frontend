@@ -340,7 +340,7 @@
 .spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
-  border-top: 4px solid #d94f70;
+  border-top-color: #d94f70;
   width: 40px;
   height: 40px;
   animation: spin 1s linear infinite;

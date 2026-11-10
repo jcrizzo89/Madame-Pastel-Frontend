@@ -48,7 +48,7 @@ const OrderSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['mercadopago', 'transfer'],
+    enum: ['mercadopago', 'transfer', 'cash', 'cashOnDelivery'],
     required: true
   },
   paymentStatus: {

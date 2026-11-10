@@ -9,7 +9,17 @@ const NotFoundPage = () => {
         <h1>404</h1>
         <h2>Página no encontrada</h2>
         <p>Lo sentimos, la página que estás buscando no existe.</p>
-        <Link to="/" className="btn">Volver al inicio</Link>
+        <div className="not-found-actions" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Link to="/productos" className="btn">
+            Explorar catálogo
+          </Link>
+          <Link to="/armar-torta" className="btn btn-outline">
+            Armá tu torta
+          </Link>
+          <Link to="/" className="btn btn-secondary">
+            Ir al inicio
+          </Link>
+        </div>
       </div>
     </div>
   );

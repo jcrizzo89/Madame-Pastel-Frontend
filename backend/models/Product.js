@@ -27,6 +27,22 @@ const ProductSchema = new mongoose.Schema({
     required: true,
     default: 0
   },
+  madeToOrder: {
+    type: Boolean,
+    default: false
+  },
+  customCakeSizeId: {
+    type: String,
+    default: ''
+  },
+  illustrativeImage: {
+    type: Boolean,
+    default: false
+  },
+  seedKey: {
+    type: String,
+    default: undefined
+  },
   isPromotion: {
     type: Boolean,
     default: false
@@ -84,5 +100,6 @@ ProductSchema.virtual('isPromotionActive').get(function() {
 // Asegurarse de que los virtuals se incluyen cuando convertimos a JSON
 ProductSchema.set('toJSON', { virtuals: true });
 ProductSchema.set('toObject', { virtuals: true });
+ProductSchema.index({ seedKey: 1 }, { unique: true, sparse: true });
 
 module.exports = mongoose.model('Product', ProductSchema);

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { protect, isAdmin } = require('../controllers/authController');
+const { protect } = require('../controllers/authController');
+const { isAdmin, isSuperAdmin } = require('../middleware/authMiddleware');
 const {
   getActiveConfig,
   getAllConfigs,
@@ -15,9 +16,9 @@ router.get('/', getActiveConfig);
 
 // Rutas protegidas (solo administradores)
 router.get('/all', protect, isAdmin, getAllConfigs);
-router.post('/', protect, isAdmin, createConfig);
-router.put('/:id', protect, isAdmin, updateConfig);
-router.put('/:id/set-default', protect, isAdmin, setDefaultConfig);
-router.delete('/:id', protect, isAdmin, deleteConfig);
+router.post('/', protect, isSuperAdmin, createConfig);
+router.put('/:id', protect, isSuperAdmin, updateConfig);
+router.put('/:id/set-default', protect, isSuperAdmin, setDefaultConfig);
+router.delete('/:id', protect, isSuperAdmin, deleteConfig);
 
 module.exports = router;

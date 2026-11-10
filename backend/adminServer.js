@@ -38,6 +38,4 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Admin Server running on port ${PORT}`);
   console.log(`Panel de administrador: http://localhost:3000/admin/login`);
-  console.log(`Usuario: admin@madamepastel.com`);
-  console.log(`Contraseña: admin123`);
 });

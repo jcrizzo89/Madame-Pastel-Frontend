@@ -3,6 +3,8 @@ import { useConfig } from '../context/ConfigContext';
 import { FaInstagram, FaWhatsapp, FaEnvelope, FaMapMarkerAlt, FaPhone, FaClock, FaFacebook } from 'react-icons/fa';
 import '../styles/ContactPage.css';
 
+const DEFAULT_WHATSAPP = '5492235512021';
+
 const ContactPage = () => {
   const { config } = useConfig();
   const [formData, setFormData] = useState({
@@ -12,7 +14,7 @@ const ContactPage = () => {
     subject: '',
     message: ''
   });
-  
+
   const [formStatus, setFormStatus] = useState({
     submitted: false,
     success: false,
@@ -21,7 +23,7 @@ const ContactPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
       [name]: value
     }));
@@ -29,93 +31,96 @@ const ContactPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Validación básica
-    if (!formData.name || !formData.email || !formData.message) {
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
       setFormStatus({
         submitted: true,
         success: false,
-        message: 'Por favor completa todos los campos requeridos.'
+        message: 'Por favor completá los campos obligatorios (nombre, email y mensaje).'
       });
       return;
     }
-    
-    // En una implementación real, aquí enviaríamos el formulario a la API
-    // Por ahora, simulamos una respuesta exitosa
-    setTimeout(() => {
-      setFormStatus({
-        submitted: true,
-        success: true,
-        message: 'Tu mensaje ha sido enviado con éxito. Te responderemos a la brevedad.'
-      });
-      
-      // Limpiar formulario
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
-      });
-    }, 1000);
+
+    const phone = config?.socialLinks?.whatsapp || config?.contactInfo?.phone || DEFAULT_WHATSAPP;
+    const cleanPhone = String(phone).replace(/\D/g, '');
+
+    const lines = [
+      'Hola Madame Pastel, les escribo desde el formulario de contacto:',
+      '',
+      `• Nombre: ${formData.name}`,
+      `• Email: ${formData.email}`,
+      formData.phone ? `• Teléfono: ${formData.phone}` : null,
+      formData.subject ? `• Asunto: ${formData.subject}` : null,
+      '',
+      `Mensaje: ${formData.message}`
+    ].filter(Boolean).join('\n');
+
+    const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(lines)}`;
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+
+    setFormStatus({
+      submitted: true,
+      success: true,
+      message: '¡Gracias! Abrimos WhatsApp con tu consulta para coordinar rápidamente con vos.'
+    });
+
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      subject: '',
+      message: ''
+    });
   };
 
   // Función para comprobar si está abierto ahora
   const isOpenNow = () => {
     if (!config?.businessHours) return false;
-    
+
     const now = new Date();
-    // Corregido: 'lowercase' no es un valor válido, usamos 'long' y luego .toLowerCase()
     const dayOfWeek = now.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
     const currentTime = now.getHours() * 60 + now.getMinutes();
-    
-    // Si el día está marcado como cerrado, retorna false
+
     if (config.businessHours[dayOfWeek]?.closed) return false;
-    
-    // Obtener horarios de apertura y cierre
+
     const openTime = config.businessHours[dayOfWeek]?.open || '00:00';
     const closeTime = config.businessHours[dayOfWeek]?.close || '00:00';
-    
-    // Convertir a minutos desde medianoche
+
     const [openHour, openMinute] = openTime.split(':').map(Number);
     const [closeHour, closeMinute] = closeTime.split(':').map(Number);
-    
+
     const openMinutes = openHour * 60 + openMinute;
     const closeMinutes = closeHour * 60 + closeMinute;
-    
-    // Comprobar si el tiempo actual está dentro del horario de apertura
+
     return currentTime >= openMinutes && currentTime <= closeMinutes;
   };
-  
-  // Función para formatear los horarios en formato legible
+
   const formatBusinessHours = (day) => {
     if (!config?.businessHours) return 'No disponible';
-    
+
     const dayData = config.businessHours[day];
     if (!dayData) return 'No disponible';
-    
+
     if (dayData.closed) return 'Cerrado';
-    
+
     return `${dayData.open || '00:00'} - ${dayData.close || '00:00'}`;
   };
 
-  // Colores desde la configuración
-  const primaryColor = config?.primaryColor || '#d94f70';
-  
-  // Estilos dinámicos
+  const primaryColor = config?.primaryColor || 'var(--primary-color)';
+
   const styles = {
     banner: {
-      backgroundColor: config?.secondaryColor || '#f8d7da',
+      backgroundColor: config?.secondaryColor || 'var(--secondary-color)'
     },
-    button: {
-      backgroundColor: primaryColor,
-      borderColor: primaryColor,
-    },
+    button: config?.primaryColor
+      ? { backgroundColor: config.primaryColor, borderColor: config.primaryColor }
+      : undefined,
     socialIcons: {
-      color: primaryColor,
+      color: primaryColor
     },
     openBadge: {
-      backgroundColor: isOpenNow() ? '#4BB543' : '#d32f2f',
+      backgroundColor: isOpenNow() ? 'var(--success-color)' : '#d32f2f'
     }
   };
 
@@ -127,46 +132,46 @@ const ContactPage = () => {
           <p>Estamos aquí para responder tus consultas y crear algo delicioso para ti</p>
         </div>
       </div>
-      
+
       <div className="container">
         <div className="contact-grid">
           <div className="contact-info">
             <h2>Información de Contacto</h2>
-            <p>Puedes contactarnos a través de los siguientes medios o completando el formulario.</p>
-            
+            <p>Podés contactarnos a través de los siguientes medios o enviándonos tu consulta directa.</p>
+
             <div className="contact-details">
               {config?.contactInfo?.address && (
                 <div className="contact-detail">
-                  <FaMapMarkerAlt className="contact-icon" />
+                  <FaMapMarkerAlt className="contact-icon" aria-hidden="true" />
                   <div>
                     <h3>Ubicación</h3>
                     <p>{config.contactInfo.address}</p>
                   </div>
                 </div>
               )}
-              
+
               {(config?.contactInfo?.phone || config?.socialLinks?.whatsapp) && (
                 <div className="contact-detail">
-                  <FaPhone className="contact-icon" />
+                  <FaPhone className="contact-icon" aria-hidden="true" />
                   <div>
                     <h3>Teléfono</h3>
                     <p>{config?.contactInfo?.phone || `(+54) ${config?.socialLinks?.whatsapp}`}</p>
                   </div>
                 </div>
               )}
-              
+
               {config?.contactInfo?.email && (
                 <div className="contact-detail">
-                  <FaEnvelope className="contact-icon" />
+                  <FaEnvelope className="contact-icon" aria-hidden="true" />
                   <div>
                     <h3>Email</h3>
                     <p>{config.contactInfo.email}</p>
                   </div>
                 </div>
               )}
-              
+
               <div className="contact-detail">
-                <FaClock className="contact-icon" />
+                <FaClock className="contact-icon" aria-hidden="true" />
                 <div>
                   <h3>Estado</h3>
                   <div className="open-status">
@@ -177,48 +182,51 @@ const ContactPage = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="social-media-contact">
               <h3>Síguenos en Redes Sociales</h3>
               <div className="social-icons">
                 {config?.socialLinks?.instagram && (
-                  <a 
-                    href={config.socialLinks.instagram} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="social-icon" 
+                  <a
+                    href={config.socialLinks.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-icon"
                     style={styles.socialIcons}
+                    aria-label="Instagram de Madame Pastel"
                   >
-                    <FaInstagram />
+                    <FaInstagram aria-hidden="true" />
                   </a>
                 )}
-                
+
                 {config?.socialLinks?.whatsapp && (
-                  <a 
-                    href={`https://wa.me/${config.socialLinks.whatsapp}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
+                  <a
+                    href={`https://wa.me/${String(config.socialLinks.whatsapp).replace(/\D/g, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="social-icon"
                     style={styles.socialIcons}
+                    aria-label="WhatsApp de Madame Pastel"
                   >
-                    <FaWhatsapp />
+                    <FaWhatsapp aria-hidden="true" />
                   </a>
                 )}
-                
+
                 {config?.socialLinks?.facebook && (
-                  <a 
-                    href={config.socialLinks.facebook} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
+                  <a
+                    href={config.socialLinks.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="social-icon"
                     style={styles.socialIcons}
+                    aria-label="Facebook de Madame Pastel"
                   >
-                    <FaFacebook />
+                    <FaFacebook aria-hidden="true" />
                   </a>
                 )}
               </div>
             </div>
-            
+
             <div className="business-hours">
               <h3>Horarios de Atención</h3>
               <ul>
@@ -253,19 +261,21 @@ const ContactPage = () => {
               </ul>
             </div>
           </div>
-          
+
           <div className="contact-form-container">
             <h2>Envíanos un Mensaje</h2>
-            
+
             {formStatus.submitted && (
-              <div className={`form-message ${formStatus.success ? 'success' : 'error'}`}>
+              <div className={`form-message ${formStatus.success ? 'success' : 'error'}`} role="status">
                 {formStatus.message}
               </div>
             )}
-            
+
             <form className="contact-form" onSubmit={handleSubmit}>
               <div className="form-group">
-                <label htmlFor="name">Nombre <span className="required">*</span></label>
+                <label htmlFor="name">
+                  Nombre <span className="required">*</span>
+                </label>
                 <input
                   type="text"
                   id="name"
@@ -276,9 +286,11 @@ const ContactPage = () => {
                   required
                 />
               </div>
-              
+
               <div className="form-group">
-                <label htmlFor="email">Email <span className="required">*</span></label>
+                <label htmlFor="email">
+                  Email <span className="required">*</span>
+                </label>
                 <input
                   type="email"
                   id="email"
@@ -289,7 +301,7 @@ const ContactPage = () => {
                   required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="phone">Teléfono</label>
                 <input
@@ -301,7 +313,7 @@ const ContactPage = () => {
                   className="form-control"
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="subject">Asunto</label>
                 <input
@@ -313,9 +325,11 @@ const ContactPage = () => {
                   className="form-control"
                 />
               </div>
-              
+
               <div className="form-group">
-                <label htmlFor="message">Mensaje <span className="required">*</span></label>
+                <label htmlFor="message">
+                  Mensaje <span className="required">*</span>
+                </label>
                 <textarea
                   id="message"
                   name="message"
@@ -326,23 +340,22 @@ const ContactPage = () => {
                   required
                 ></textarea>
               </div>
-              
+
               <button type="submit" className="btn submit-btn" style={styles.button}>
-                Enviar Mensaje
+                Enviar por WhatsApp
               </button>
             </form>
           </div>
         </div>
       </div>
-      
+
       <div className="location-section">
         <div className="container">
           <h2 className="section-title">Nuestra Ubicación</h2>
           <div className="map-container">
-            {/* Aquí se puede integrar un mapa con Google Maps u otra API */}
             <div className="map-placeholder">
-              <FaMapMarkerAlt className="marker-icon" />
-              <p>Mapa de ubicación - {config?.contactInfo?.address || 'Mar del Plata, Buenos Aires'}</p>
+              <FaMapMarkerAlt className="marker-icon" aria-hidden="true" />
+              <p>Mar del Plata, Buenos Aires — {config?.contactInfo?.address || 'Envíos a domicilio'}</p>
             </div>
           </div>
         </div>

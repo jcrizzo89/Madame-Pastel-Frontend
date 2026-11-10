@@ -17,6 +17,16 @@
   text-align: center;
 }
 
+.admin-brand-logo {
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+}
+
 .admin-sidebar-header h2 {
   margin: 0;
   font-size: 20px;
@@ -90,7 +100,8 @@
   transition: all 0.2s ease;
 }
 
-.admin-sidebar-nav a i {
+.admin-sidebar-nav a i,
+.admin-sidebar-nav a svg {
   margin-right: 10px;
   font-size: 16px;
   width: 20px;
@@ -105,7 +116,7 @@
 .admin-sidebar-nav a.active {
   background-color: #d06c93;
   color: #ffffff;
-  border-left: 4px solid #f8b4d9;
+  box-shadow: inset 3px 0 0 #f8b4d9;
 }
 
 .admin-sidebar-footer {
@@ -122,7 +133,8 @@
   padding: 8px 0;
 }
 
-.admin-logout-btn i {
+.admin-logout-btn i,
+.admin-logout-btn svg {
   margin-right: 10px;
 }
 
@@ -130,14 +142,8 @@
   color: #ffffff;
 }
 
-@media (max-width: 768px) {
-  .admin-sidebar {
-    width: 70px;
-    overflow: hidden;
-  }
-  
-  .admin-sidebar:hover {
-    width: 250px;
+@media (max-width: 768px) {@media (hover: hover) and (pointer: fine) {
+    .admin-sidebar:hover {}
   }
   
   .admin-sidebar-header h2,
@@ -162,7 +168,8 @@
     justify-content: center;
   }
   
-  .admin-sidebar-nav a i {
+  .admin-sidebar-nav a i,
+.admin-sidebar-nav a svg {
     margin-right: 0;
     font-size: 18px;
   }
@@ -171,7 +178,8 @@
     justify-content: flex-start;
   }
   
-  .admin-sidebar:hover .admin-sidebar-nav a i {
+  .admin-sidebar:hover .admin-sidebar-nav a i,
+.admin-sidebar-nav a svg {
     margin-right: 10px;
   }
   

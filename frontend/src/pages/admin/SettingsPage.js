@@ -203,6 +203,28 @@ const SettingsPage = () => {
                   rows="3"
                 ></textarea>
               </div>
+
+              <div className="form-group">
+                <label htmlFor="homepageAboutTitle">Título de la sección Nuestra propuesta</label>
+                <input
+                  type="text"
+                  id="homepageAboutTitle"
+                  name="homepageAboutTitle"
+                  value={config.siteSettings.homepageAboutTitle || ''}
+                  onChange={(e) => handleInputChange(e, 'siteSettings')}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="homepageAboutDescription">Texto de la sección Nuestra propuesta</label>
+                <textarea
+                  id="homepageAboutDescription"
+                  name="homepageAboutDescription"
+                  value={config.siteSettings.homepageAboutDescription || ''}
+                  onChange={(e) => handleInputChange(e, 'siteSettings')}
+                  rows="3"
+                ></textarea>
+              </div>
               
               <div className="form-group">
                 <label htmlFor="metaDescription">Meta Descripción</label>

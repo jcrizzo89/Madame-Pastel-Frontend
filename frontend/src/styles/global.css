@@ -13,6 +13,16 @@
   --transition: all 0.3s ease;
   --border-radius: 8px;
   --container-width: 1200px;
+
+  /* Tokens semánticos de marca y pastelería */
+  --wine-dark: #601a24;
+  --wine-heading: #681f29;
+  --wine-subtext: #68484a;
+  --pink-surface: #fff8f5;
+  --pink-card: #fffaf9;
+  --pink-border: #f3d7d2;
+  --brand-rose: #c94860;
+  --brand-rose-hover: #a92f47;
 }
 
 * {
@@ -35,7 +45,8 @@ body {
   padding: 0 20px;
 }
 
-.btn {
+.btn,
+.btn-primary {
   display: inline-block;
   background-color: var(--primary-color);
   color: white;
@@ -50,9 +61,17 @@ body {
   text-align: center;
 }
 
-.btn:hover {
+.btn:hover,
+.btn-primary:hover {
   background-color: var(--accent-color);
   transform: translateY(-2px);
+}
+
+.btn:disabled,
+.btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .btn-outline {

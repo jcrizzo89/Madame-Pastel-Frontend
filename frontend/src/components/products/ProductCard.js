@@ -6,28 +6,37 @@ import './ProductCard.css';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
-  
-  const handleAddToCart = (e) => {
-    e.preventDefault();
-    addToCart(product);
-  };
 
   // Verificar si el producto está en promoción
-  const isOnPromotion = product.isPromotion || 
-    (product.seasonalPromotion && product.isPromotionActive);
-  
+  const isOnPromotion = Boolean(
+    product.isPromotion || (product.seasonalPromotion && product.isPromotionActive)
+  );
+
   // Calcular el precio con descuento si está en promoción
-  const discountedPrice = isOnPromotion ? 
-    product.price * (1 - (product.discountPercentage / 100)) : 
-    product.price;
-  
+  const discountedPrice = isOnPromotion && product.discountPercentage > 0
+    ? product.price * (1 - (product.discountPercentage / 100))
+    : product.price;
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    addToCart({
+      ...product,
+      id: product._id || product.id,
+      price: discountedPrice,
+      originalPrice: isOnPromotion ? product.price : undefined,
+      isOnPromotion
+    });
+  };
+
   // Formatear precio para mostrar
   const formatPrice = (price) => {
-    return price.toLocaleString('es-AR', {
+    return Number(price || 0).toLocaleString('es-AR', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2
     });
   };
+
+  const productId = product._id || product.id;
 
   return (
     <div className="product-card">
@@ -37,33 +46,63 @@ const ProductCard = ({ product }) => {
           {product.discountPercentage || 0}% OFF
         </div>
       )}
-      
+
       {/* Imagen principal */}
       <div className="product-image">
-        <Link to={`/productos/${product._id || product.id}`} className="image-link">
-          <img src={product.image} alt={product.name} />
+        <Link to={`/productos/${productId}`} className="image-link" aria-label={`Ver detalles de ${product.name}`}>
+          <img
+            src={product.image || '/logo-madame-pastel.jpeg'}
+            alt={product.name}
+            loading="lazy"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = '/logo-madame-pastel.jpeg';
+            }}
+          />
         </Link>
-        
+
         {/* Botones de acción */}
         <div className="product-actions">
-          <button onClick={handleAddToCart} className="add-to-cart-btn" title="Agregar al carrito">
-            <FaShoppingCart /> <span>Agregar</span>
-          </button>
-          <Link to={`/productos/${product._id || product.id}`} className="view-details-btn" title="Ver detalles">
-            <FaEye /> <span>Ver</span>
+          {product.madeToOrder ? (
+            <Link
+              to={`/armar-torta?size=${encodeURIComponent(product.customCakeSizeId || '')}`}
+              className="add-to-cart-btn"
+              aria-label={`Personalizar ${product.name}`}
+            >
+              <span>Personalizar</span>
+            </Link>
+          ) : (
+            <button
+              onClick={handleAddToCart}
+              className="add-to-cart-btn"
+              title="Agregar al carrito"
+              aria-label={`Agregar ${product.name} al carrito`}
+              type="button"
+            >
+              <FaShoppingCart aria-hidden="true" /> <span>Agregar</span>
+            </button>
+          )}
+          <Link
+            to={`/productos/${productId}`}
+            className="view-details-btn"
+            title="Ver detalles"
+            aria-label={`Ver detalles de ${product.name}`}
+          >
+            <FaEye aria-hidden="true" /> <span>Ver</span>
           </Link>
         </div>
       </div>
-      
+
       {/* Contenido inferior */}
       <div className="product-content">
         <div className="product-info">
           <span className="product-category">{product.category}</span>
+          {product.madeToOrder && <span className="product-category">A pedido · imagen ilustrativa</span>}
           <h3 className="product-title">
-            <Link to={`/productos/${product._id || product.id}`}>{product.name}</Link>
+            <Link to={`/productos/${productId}`}>{product.name}</Link>
           </h3>
         </div>
-        
+
         <div className="product-bottom">
           <div className="product-price">
             {isOnPromotion ? (

@@ -1,21 +1,18 @@
 const nodemailer = require('nodemailer');
 const path = require('path');
-const hbs = require('nodemailer-express-handlebars');
 
 // Crear el transportador de nodemailer
-const createTransporter = () => {
-  // En producción, se utilizarían las credenciales reales del servicio de correo
-  // Para desarrollo, podemos usar una cuenta de prueba o ethereal.email
-  
-  // Configuración para entorno de desarrollo (ejemplo con Gmail)
+const createTransporter = async () => {
+  const missing = ['EMAIL_HOST', 'EMAIL_USER', 'EMAIL_PASSWORD']
+    .filter(key => !process.env[key]);
+  if (missing.length) throw new Error('Email delivery is not configured');
+
+  const { default: hbs } = await import('nodemailer-express-handlebars');
   const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: process.env.EMAIL_PORT || 587,
+    host: process.env.EMAIL_HOST,
+    port: Number(process.env.EMAIL_PORT || 587),
     secure: process.env.EMAIL_SECURE === 'true',
-    auth: {
-      user: process.env.EMAIL_USER || 'madamepastelmdp@gmail.com', // Cambiar por email real en producción
-      pass: process.env.EMAIL_PASSWORD || 'tu_contraseña_segura', // Usar variables de entorno en producción
-    },
+    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASSWORD },
   });
   
   // Configuración de plantillas handlebars

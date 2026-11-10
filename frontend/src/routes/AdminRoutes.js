@@ -15,11 +15,23 @@ import ReportsPage from '../pages/admin/ReportsPage';
 import SettingsPage from '../pages/admin/SettingsPage';
 import PromotionsPage from '../pages/admin/PromotionsPage';
 import NotificationsPage from '../pages/admin/NotificationsPage';
+import UsersPage from '../pages/admin/UsersPage';
+import { canAccessAdminPath, getDefaultAdminPath } from '../utils/adminAccess';
 
 // Componente para rutas protegidas
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem('adminToken');
   return isAuthenticated ? children : <Navigate to="/admin/login" />;
+};
+
+const RoleProtectedRoute = ({ path, children }) => {
+  const user = JSON.parse(localStorage.getItem('adminUser') || '{}');
+  return canAccessAdminPath(user.role, path) ? children : <Navigate to={getDefaultAdminPath(user.role)} replace />;
+};
+
+const AdminHomeRedirect = () => {
+  const user = JSON.parse(localStorage.getItem('adminUser') || '{}');
+  return <Navigate to={getDefaultAdminPath(user.role)} replace />;
 };
 
 const AdminRoutes = () => {
@@ -37,17 +49,18 @@ const AdminRoutes = () => {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to="/admin/dashboard" />} />
-        <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="products" element={<ProductsPage />} />
-        <Route path="statistics" element={<StatisticsPage />} />
-        <Route path="categories" element={<CategoriesPage />} />
-        <Route path="orders" element={<OrdersPage />} />
-        <Route path="inventory" element={<InventoryPage />} />
-        <Route path="promotions" element={<PromotionsPage />} />
-        <Route path="notifications" element={<NotificationsPage />} />
-        <Route path="reports" element={<ReportsPage />} />
-        <Route path="settings" element={<SettingsPage />} />
+        <Route index element={<AdminHomeRedirect />} />
+        <Route path="dashboard" element={<RoleProtectedRoute path="/admin/dashboard"><DashboardPage /></RoleProtectedRoute>} />
+        <Route path="products" element={<RoleProtectedRoute path="/admin/products"><ProductsPage /></RoleProtectedRoute>} />
+        <Route path="statistics" element={<RoleProtectedRoute path="/admin/statistics"><StatisticsPage /></RoleProtectedRoute>} />
+        <Route path="categories" element={<RoleProtectedRoute path="/admin/categories"><CategoriesPage /></RoleProtectedRoute>} />
+        <Route path="orders" element={<RoleProtectedRoute path="/admin/orders"><OrdersPage /></RoleProtectedRoute>} />
+        <Route path="inventory" element={<RoleProtectedRoute path="/admin/inventory"><InventoryPage /></RoleProtectedRoute>} />
+        <Route path="promotions" element={<RoleProtectedRoute path="/admin/promotions"><PromotionsPage /></RoleProtectedRoute>} />
+        <Route path="notifications" element={<RoleProtectedRoute path="/admin/notifications"><NotificationsPage /></RoleProtectedRoute>} />
+        <Route path="reports" element={<RoleProtectedRoute path="/admin/reports"><ReportsPage /></RoleProtectedRoute>} />
+        <Route path="settings" element={<RoleProtectedRoute path="/admin/settings"><SettingsPage /></RoleProtectedRoute>} />
+        <Route path="users" element={<RoleProtectedRoute path="/admin/users"><UsersPage /></RoleProtectedRoute>} />
       </Route>
       
       {/* Redirección por defecto para rutas no encontradas dentro de /admin */}

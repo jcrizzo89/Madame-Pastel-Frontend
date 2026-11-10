@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { check } = require('express-validator');
-const { protect, isAdmin } = require('../controllers/authController');
+const { protect } = require('../controllers/authController');
+const { isAdmin } = require('../middleware/authMiddleware');
 const {
   getCategories,
   getCategoryById,

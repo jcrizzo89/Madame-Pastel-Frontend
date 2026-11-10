@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { API_URL } from '../utils/constants';
+import { API_URL, PLACEHOLDER_IMAGES } from '../utils/constants';
+import ProductCard from '../components/products/ProductCard';
 import '../styles/PromotionsPage.css';
 
 const PromotionsPage = () => {
@@ -9,119 +10,106 @@ const PromotionsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchPromotions = async () => {
-      try {
-        setLoading(true);
-        
-        // Obtener productos en promoción desde la API
-        const response = await axios.get(`${API_URL}/products/promotions`);
-        
-        if (response.data && response.data.length > 0) {
-          // Formatear los datos para mostrarlos correctamente
-          const formattedPromotions = response.data.map(product => {
-            const discountPrice = product.isPromotion || product.seasonalPromotion 
-              ? product.price * (1 - (product.discountPercentage / 100)) 
-              : product.price;
-              
-            return {
-              id: product._id,
-              name: product.name,
-              description: product.description,
-              price: product.price,
-              discountPrice: parseFloat(discountPrice.toFixed(2)),
-              image: product.image || 'https://via.placeholder.com/600x400',
-              category: product.category,
-              discountPercentage: product.discountPercentage
-            };
-          });
-          
-          setPromotions(formattedPromotions);
-        } else {
-          setPromotions([]);
-        }
-        
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching promotions:', error);
-        setError('No pudimos cargar las promociones. Por favor, intenta nuevamente más tarde.');
-        setLoading(false);
+  const fetchPromotions = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await axios.get(`${API_URL}/products/promotions`);
+
+      if (response.data && response.data.length > 0) {
+        const formattedPromotions = response.data.map((product) => ({
+          ...product,
+          id: product._id,
+          _id: product._id,
+          name: product.name,
+          description: product.description || '',
+          price: product.price,
+          image: product.image || PLACEHOLDER_IMAGES.PRODUCT_SMALL,
+          category: product.category,
+          isPromotion: true,
+          discountPercentage: product.discountPercentage || 0,
+          inStock: product.stock > 0 || product.madeToOrder,
+          madeToOrder: product.madeToOrder,
+          customCakeSizeId: product.customCakeSizeId
+        }));
+        setPromotions(formattedPromotions);
+      } else {
+        setPromotions([]);
       }
-    };
-    
-    fetchPromotions();
+    } catch (err) {
+      console.error('Error fetching promotions:', err);
+      setError('No pudimos cargar las promociones en este momento. Por favor, intentá nuevamente.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchPromotions();
+  }, [fetchPromotions]);
 
   return (
     <div className="promotions-page">
       <div className="promotions-banner">
         <div className="container">
           <h1>Promociones Especiales</h1>
-          <p>Aprovecha nuestras ofertas y promociones exclusivas</p>
+          <p>Aprovechá nuestras ofertas y promociones exclusivas en pastelería artesanal</p>
         </div>
       </div>
-      
-      <div className="container">
+
+      <div className="container" style={{ padding: '40px 20px' }}>
         {loading ? (
           <p className="loading-message">Cargando promociones...</p>
         ) : error ? (
           <div className="error-message">
             <p>{error}</p>
-            <button onClick={() => window.location.reload()} className="btn">
+            <button onClick={fetchPromotions} className="btn" type="button" style={{ marginTop: '1rem' }}>
               Intentar nuevamente
             </button>
           </div>
         ) : (
           <>
             {promotions.length > 0 ? (
-              <div className="promotions-grid">
-                {promotions.map(promo => (
-                  <div className="promo-card" key={promo.id}>
-                    <div className="promo-image">
-                      <img src={promo.image} alt={promo.name} />
-                      <div className="discount-badge">
-                        {promo.discountPercentage}% OFF
-                      </div>
-                    </div>
-                    <div className="promo-content">
-                      <h3>{promo.name}</h3>
-                      <p>{promo.description}</p>
-                      <div className="promo-price">
-                        <span className="original-price">${promo.price.toLocaleString('es-AR')}</span>
-                        <span className="discount-price">${promo.discountPrice.toLocaleString('es-AR')}</span>
-                      </div>
-                      <div className="promo-actions">
-                        <Link to={`/productos/${promo.id}`} className="btn">Ver Detalle</Link>
-                      </div>
-                    </div>
-                  </div>
+              <div className="products-grid">
+                {promotions.map((promo) => (
+                  <ProductCard key={promo.id} product={promo} />
                 ))}
               </div>
             ) : (
-              <div className="no-promotions">
-                <h2>No hay promociones disponibles</h2>
-                <p>Actualmente no tenemos promociones activas, pero te invitamos a explorar nuestros productos regulares.</p>
-                <Link to="/productos" className="btn">Ver Productos</Link>
+              <div className="no-promotions text-center" style={{ padding: '60px 20px' }}>
+                <h2>No hay promociones activas por el momento</h2>
+                <p style={{ margin: '15px 0 25px', color: '#666' }}>
+                  Te invitamos a explorar nuestro catálogo de tortas y productos artesanales.
+                </p>
+                <Link to="/productos" className="btn btn-primary">
+                  Ver catálogo de productos
+                </Link>
               </div>
             )}
           </>
         )}
       </div>
-      
+
       <div className="promo-info-section">
         <div className="container">
           <div className="info-grid">
             <div className="info-item">
               <h3>¿Cómo funcionan nuestras promociones?</h3>
-              <p>Nuestras promociones están disponibles por tiempo limitado. Te recomendamos aprovecharlas cuanto antes. Las promociones no son acumulables con otros descuentos.</p>
+              <p>
+                Los descuentos se aplican automáticamente sobre el valor de lista del producto al momento de agregarlo a tu carrito.
+              </p>
             </div>
             <div className="info-item">
-              <h3>Promociones personalizadas</h3>
-              <p>Para eventos especiales y pedidos corporativos, contáctanos para conocer nuestras promociones personalizadas y descuentos por volumen.</p>
+              <h3>Envíos y entregas</h3>
+              <p>
+                Coordinamos los envíos a domicilio en Mar del Plata vía WhatsApp para asegurar la frescura de cada preparación.
+              </p>
             </div>
             <div className="info-item">
-              <h3>Próximas promociones</h3>
-              <p>Síguenos en nuestras redes sociales para enterarte de nuestras promociones antes que nadie. ¡Tenemos sorpresas cada mes!</p>
+              <h3>Tortas a pedido</h3>
+              <p>
+                Podés armar y personalizar tu torta eligiendo tamaño, bizcochuelo y dos rellenos en nuestra sección de personalización.
+              </p>
             </div>
           </div>
         </div>

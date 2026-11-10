@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { registerAdmin, loginAdmin, protect, isAdmin } = require('../controllers/authController');
+const { registerAdmin, loginAdmin, protect } = require('../controllers/authController');
+const { protect: authenticate, isSuperAdmin } = require('../middleware/authMiddleware');
 
-// Rutas públicas
-router.post('/register', registerAdmin);
+// El alta de administradores solo puede iniciarla un administrador existente.
+router.post('/register', authenticate, isSuperAdmin, registerAdmin);
+// Inicio de sesión público.
 router.post('/login', loginAdmin);
 
 // Ruta protegida para verificar token

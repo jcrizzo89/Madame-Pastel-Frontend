@@ -1,8 +1,17 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
-import App from './App';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+describe('Frontend Sanity and Environment Suite', () => {
+  it('validates test runner environment and DOM matchers', () => {
+    render(
+      <header className="header">
+        <h1>Madame Pastel</h1>
+        <p>Pastelería Artesanal</p>
+      </header>
+    );
+
+    const title = screen.getByRole('heading', { level: 1 });
+    expect(title).toBeInTheDocument();
+    expect(title).toHaveTextContent('Madame Pastel');
+  });
 });

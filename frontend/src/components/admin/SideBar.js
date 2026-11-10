@@ -1,6 +1,20 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import {
+  FaTachometerAlt,
+  FaBirthdayCake,
+  FaTags,
+  FaShoppingBag,
+  FaBoxes,
+  FaPercentage,
+  FaChartPie,
+  FaChartLine,
+  FaCog,
+  FaUsersCog,
+  FaSignOutAlt
+} from 'react-icons/fa';
 import '../../styles/admin/SideBar.css';
+import { canAccessAdminPath } from '../../utils/adminAccess';
 
 const SideBar = () => {
   const location = useLocation();
@@ -14,6 +28,7 @@ const SideBar = () => {
   return (
     <div className="admin-sidebar">
       <div className="admin-sidebar-header">
+        <img className="admin-brand-logo" src="/logo-madame-pastel.jpeg" alt="" />
         <h2>Madame Pastel</h2>
         <p>Panel Admin</p>
       </div>
@@ -24,91 +39,100 @@ const SideBar = () => {
         </div>
         <div className="admin-user-details">
           <p className="admin-username">{adminUser.username || 'Admin'}</p>
-          <p className="admin-role">{adminUser.role || 'Administrador'}</p>
+          <p className="admin-role">{{ superadmin: 'Propietaria', admin: 'Administrador', staff: 'Personal' }[adminUser.role] || 'Sin rol'}</p>
         </div>
       </div>
       
       <nav className="admin-sidebar-nav">
         <ul>
-          <li>
+          {canAccessAdminPath(adminUser.role, '/admin/dashboard') && <li>
             <Link 
               to="/admin/dashboard" 
               className={isActive('/admin/dashboard') ? 'active' : ''}
             >
-              <i className="fas fa-tachometer-alt"></i>
-              Dashboard
+              <FaTachometerAlt aria-hidden="true" />
+              <span>Dashboard</span>
             </Link>
-          </li>
-          <li>
-            <Link 
-              to="/admin/products" 
-              className={isActive('/admin/products') ? 'active' : ''}
-            >
-              <i className="fas fa-birthday-cake"></i>
-              Productos
+          </li>}
+          {canAccessAdminPath(adminUser.role, '/admin/products') && <li>
+            <Link to="/admin/products" className={isActive('/admin/products') ? 'active' : ''}>
+              <FaBirthdayCake aria-hidden="true" />
+              <span>Productos</span>
             </Link>
-          </li>
-          <li>
+          </li>}
+          {canAccessAdminPath(adminUser.role, '/admin/categories') && <li>
             <Link 
               to="/admin/categories" 
               className={isActive('/admin/categories') ? 'active' : ''}
             >
-              <i className="fas fa-tags"></i>
-              Categorías
+              <FaTags aria-hidden="true" />
+              <span>Categorías</span>
             </Link>
-          </li>
+          </li>}
           <li>
             <Link 
               to="/admin/orders" 
               className={isActive('/admin/orders') ? 'active' : ''}
             >
-              <i className="fas fa-shopping-bag"></i>
-              Pedidos
+              <FaShoppingBag aria-hidden="true" />
+              <span>Pedidos</span>
             </Link>
           </li>
-          <li>
+          {canAccessAdminPath(adminUser.role, '/admin/inventory') && <li>
             <Link 
               to="/admin/inventory" 
               className={isActive('/admin/inventory') ? 'active' : ''}
             >
-              <i className="fas fa-warehouse"></i>
-              Inventario
+              <FaBoxes aria-hidden="true" />
+              <span>Inventario</span>
             </Link>
-          </li>
-          <li>
+          </li>}
+          {canAccessAdminPath(adminUser.role, '/admin/promotions') && <li>
+            <Link to="/admin/promotions" className={isActive('/admin/promotions') ? 'active' : ''}>
+              <FaPercentage aria-hidden="true" />
+              <span>Promociones</span>
+            </Link>
+          </li>}
+          {canAccessAdminPath(adminUser.role, '/admin/reports') && <li>
             <Link 
               to="/admin/reports" 
               className={isActive('/admin/reports') ? 'active' : ''}
             >
-              <i className="fas fa-chart-pie"></i>
-              Reportes
+              <FaChartPie aria-hidden="true" />
+              <span>Reportes</span>
             </Link>
-          </li>
-          <li>
+          </li>}
+          {canAccessAdminPath(adminUser.role, '/admin/statistics') && <li>
             <Link 
               to="/admin/statistics" 
               className={isActive('/admin/statistics') ? 'active' : ''}
             >
-              <i className="fas fa-chart-line"></i>
-              Estadísticas
+              <FaChartLine aria-hidden="true" />
+              <span>Estadísticas</span>
             </Link>
-          </li>
-          <li>
+          </li>}
+          {canAccessAdminPath(adminUser.role, '/admin/settings') && <li>
             <Link 
               to="/admin/settings" 
               className={isActive('/admin/settings') ? 'active' : ''}
             >
-              <i className="fas fa-cog"></i>
-              Configuración
+              <FaCog aria-hidden="true" />
+              <span>Configuración</span>
             </Link>
-          </li>
+          </li>}
+          {canAccessAdminPath(adminUser.role, '/admin/users') && <li>
+            <Link to="/admin/users" className={isActive('/admin/users') ? 'active' : ''}>
+              <FaUsersCog aria-hidden="true" />
+              <span>Equipo</span>
+            </Link>
+          </li>}
         </ul>
       </nav>
       
       <div className="admin-sidebar-footer">
         <Link to="/admin/logout" className="admin-logout-btn">
-          <i className="fas fa-sign-out-alt"></i>
-          Cerrar sesión
+          <FaSignOutAlt aria-hidden="true" />
+          <span>Cerrar sesión</span>
         </Link>
       </div>
     </div>

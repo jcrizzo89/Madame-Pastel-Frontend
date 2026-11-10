@@ -19,52 +19,59 @@ const DashboardPage = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    let active = true;
     const fetchDashboardData = async () => {
       try {
         const token = localStorage.getItem('adminToken');
         
         if (!token) {
-          setError('No estás autenticado');
-          setLoading(false);
+          if (active) {
+            setError('No estás autenticado');
+            setLoading(false);
+          }
           return;
         }
 
-        // Obtener productos
-        const productsResponse = await axios.get(`${API_URL}/products`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        // Filtrar productos en promoción
-        const promoProducts = productsResponse.data.filter(product => product.isPromotion);
-        setPromotionProducts(promoProducts);
+        const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
+        const [productsRes, statsRes, topRes, ordersRes] = await Promise.allSettled([
+          axios.get(`${API_URL}/products`, authHeaders),
+          axios.get(`${API_URL}/statistics/summary`, authHeaders),
+          axios.get(`${API_URL}/statistics/most-sold`, authHeaders),
+          axios.get(`${API_URL}/orders/recent?limit=5`, authHeaders)
+        ]);
 
-        // Obtener estadísticas generales
-        const statsResponse = await axios.get(`${API_URL}/statistics/summary`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        if (!active) return;
 
-        // Obtener productos más vendidos
-        const topProductsResponse = await axios.get(`${API_URL}/statistics/most-sold`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        if (productsRes.status === 'fulfilled' && Array.isArray(productsRes.value.data)) {
+          setPromotionProducts(productsRes.value.data.filter((p) => p.isPromotion));
+        }
 
-        // Obtener órdenes recientes (limitadas a 5)
-        const recentOrdersResponse = await axios.get(`${API_URL}/orders/recent?limit=5`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        if (statsRes.status === 'fulfilled' && statsRes.value.data) {
+          setStats(statsRes.value.data);
+        }
 
-        setStats(statsResponse.data);
-        setTopProducts(topProductsResponse.data.slice(0, 5));
-        setRecentOrders(recentOrdersResponse.data);
+        if (topRes.status === 'fulfilled' && Array.isArray(topRes.value.data)) {
+          setTopProducts(topRes.value.data.slice(0, 5));
+        }
+
+        if (ordersRes.status === 'fulfilled' && Array.isArray(ordersRes.value.data)) {
+          setRecentOrders(ordersRes.value.data);
+        }
+
         setLoading(false);
       } catch (err) {
-        console.error("Error fetching dashboard data:", err);
-        setError('Error al cargar los datos del dashboard');
-        setLoading(false);
+        if (active) {
+          console.error('Error fetching dashboard data:', err);
+          setError('Error al cargar los datos del dashboard');
+          setLoading(false);
+        }
       }
     };
 
     fetchDashboardData();
+    return () => {
+      active = false;
+    };
   }, []);
 
   // Formatear precio a moneda local
@@ -72,7 +79,7 @@ const DashboardPage = () => {
     return new Intl.NumberFormat('es-AR', {
       style: 'currency',
       currency: 'ARS'
-    }).format(amount);
+    }).format(amount || 0);
   };
 
   if (loading) {
@@ -94,6 +101,10 @@ const DashboardPage = () => {
     );
   }
 
+  const pendingOrders = recentOrders.filter(
+    (order) => order.status === 'pending' || order.status === 'processing'
+  );
+
   return (
     <div className="admin-dashboard-page">
       <div className="admin-page-header">
@@ -109,7 +120,7 @@ const DashboardPage = () => {
       <DashboardStats />
       
       <div className="dashboard-sections">
-        {/* Nueva sección de Promociones */}
+        {/* Sección de Promociones */}
         <div className="dashboard-section">
           <div className="section-header">
             <h2>Gestión de Promociones</h2>
@@ -136,7 +147,7 @@ const DashboardPage = () => {
                 <div className="stat-info">
                   <div className="stat-value">
                     {promotionProducts.length > 0 
-                      ? Math.round(promotionProducts.reduce((acc, product) => acc + product.discountPercentage, 0) / promotionProducts.length) 
+                      ? Math.round(promotionProducts.reduce((acc, product) => acc + (product.discountPercentage || 0), 0) / promotionProducts.length) 
                       : 0}%
                   </div>
                   <div className="stat-label">Descuento promedio</div>
@@ -155,10 +166,9 @@ const DashboardPage = () => {
                     <div className="promo-col promo-col-price">Precio Original</div>
                     <div className="promo-col promo-col-discount">Descuento</div>
                     <div className="promo-col promo-col-final">Precio Final</div>
-                    <div className="promo-col promo-col-actions">Acciones</div>
                   </div>
                   
-                  {promotionProducts.map(product => (
+                  {promotionProducts.map((product) => (
                     <div key={product._id} className="promo-table-row">
                       <div className="promo-col promo-col-product">
                         <div className="promo-product-info">
@@ -178,20 +188,7 @@ const DashboardPage = () => {
                       <div className="promo-col promo-col-price">{formatCurrency(product.price)}</div>
                       <div className="promo-col promo-col-discount">{product.discountPercentage}%</div>
                       <div className="promo-col promo-col-final">
-                        {formatCurrency(product.price * (1 - product.discountPercentage / 100))}
-                      </div>
-                      <div className="promo-col promo-col-actions">
-                        <a href={`/admin/products/edit/${product._id}`} className="promo-edit-btn" title="Editar promoción">
-                          <i className="fas fa-edit"></i>
-                        </a>
-                        <button className="promo-remove-btn" title="Quitar promoción" onClick={() => {
-                          if (window.confirm(`¿Estás seguro de que deseas quitar la promoción de ${product.name}?`)) {
-                            // Aquí iría la lógica para quitar la promoción
-                            alert('Función de quitar promoción no implementada aún.');
-                          }
-                        }}>
-                          <i className="fas fa-times"></i>
-                        </button>
+                        {formatCurrency(product.price * (1 - (product.discountPercentage || 0) / 100))}
                       </div>
                     </div>
                   ))}
@@ -199,66 +196,52 @@ const DashboardPage = () => {
               )}
               
               <div className="promo-actions">
-                <button className="add-promo-btn" onClick={() => {
-                  window.location.href = '/admin/products';
-                }}>
+                <a href="/admin/products" className="add-promo-btn" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
                   <i className="fas fa-plus"></i>
-                  Agregar Nueva Promoción
-                </button>
+                  Gestionar en Catálogo
+                </a>
               </div>
             </div>
           </div>
         </div>
         
+        {/* Actividad Reciente (Órdenes reales) */}
         <div className="dashboard-section">
           <div className="section-header">
             <h2>Actividad Reciente</h2>
+            <a href="/admin/orders" className="view-all-link">
+              Ver pedidos
+              <i className="fas fa-chevron-right"></i>
+            </a>
           </div>
           <div className="recent-activity">
-            <div className="activity-item">
-              <div className="activity-icon order">
-                <i className="fas fa-shopping-bag"></i>
-              </div>
-              <div className="activity-content">
-                <div className="activity-title">Nuevo pedido recibido</div>
-                <div className="activity-subtitle">Pedido #2458 - $3,850.00</div>
-                <div className="activity-time">Hace 25 minutos</div>
-              </div>
-              <div className="activity-actions">
-                <a href="/admin/orders/2458" className="view-button">Ver</a>
-              </div>
-            </div>
-            
-            <div className="activity-item">
-              <div className="activity-icon product">
-                <i className="fas fa-birthday-cake"></i>
-              </div>
-              <div className="activity-content">
-                <div className="activity-title">Producto con stock bajo</div>
-                <div className="activity-subtitle">Torta de Chocolate - 3 unidades restantes</div>
-                <div className="activity-time">Hace 2 horas</div>
-              </div>
-              <div className="activity-actions">
-                <a href="/admin/inventory" className="view-button">Ver</a>
-              </div>
-            </div>
-            
-            <div className="activity-item">
-              <div className="activity-icon payment">
-                <i className="fas fa-money-bill-wave"></i>
-              </div>
-              <div className="activity-content">
-                <div className="activity-title">Pago recibido</div>
-                <div className="activity-subtitle">Pedido #2455 - $2,300.00</div>
-                <div className="activity-time">Hace 5 horas</div>
-              </div>
-              <div className="activity-actions">
-                <a href="/admin/orders/2455" className="view-button">Ver</a>
-              </div>
-            </div>
+            {recentOrders && recentOrders.length > 0 ? (
+              recentOrders.map((order) => (
+                <div className="activity-item" key={order._id}>
+                  <div className="activity-icon order">
+                    <i className="fas fa-shopping-bag"></i>
+                  </div>
+                  <div className="activity-content">
+                    <div className="activity-title">Pedido #{order.orderNumber || (order._id ? order._id.slice(-4) : '---')}</div>
+                    <div className="activity-subtitle">
+                      {order.customer?.name || 'Cliente'} — {formatCurrency(order.totalAmount || order.total || 0)}
+                    </div>
+                    <div className="activity-time">
+                      {new Date(order.createdAt).toLocaleDateString('es-AR', { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </div>
+                  <div className="activity-actions">
+                    <a href="/admin/orders" className="view-button">Ver</a>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p style={{ padding: '20px', color: '#777', margin: 0 }}>No hay pedidos recientes registrados.</p>
+            )}
           </div>
         </div>
         
+        {/* Pedidos Pendientes */}
         <div className="dashboard-section">
           <div className="section-header">
             <h2>Pedidos Pendientes</h2>
@@ -268,44 +251,30 @@ const DashboardPage = () => {
             </a>
           </div>
           <div className="pending-orders">
-            <div className="order-item">
-              <div className="order-id">#2458</div>
-              <div className="order-info">
-                <div className="order-customer">María González</div>
-                <div className="order-details">3 productos - $3,850.00</div>
-              </div>
-              <div className="order-date">6 Abr 2025</div>
-              <div className="order-status pending">Pendiente</div>
-              <div className="order-actions">
-                <a href="/admin/orders/2458" className="view-button">Ver</a>
-              </div>
-            </div>
-            
-            <div className="order-item">
-              <div className="order-id">#2457</div>
-              <div className="order-info">
-                <div className="order-customer">Juan Pérez</div>
-                <div className="order-details">1 producto - $850.00</div>
-              </div>
-              <div className="order-date">6 Abr 2025</div>
-              <div className="order-status processing">En proceso</div>
-              <div className="order-actions">
-                <a href="/admin/orders/2457" className="view-button">Ver</a>
-              </div>
-            </div>
-            
-            <div className="order-item">
-              <div className="order-id">#2456</div>
-              <div className="order-info">
-                <div className="order-customer">Laura Martínez</div>
-                <div className="order-details">2 productos - $1,750.00</div>
-              </div>
-              <div className="order-date">5 Abr 2025</div>
-              <div className="order-status pending">Pendiente</div>
-              <div className="order-actions">
-                <a href="/admin/orders/2456" className="view-button">Ver</a>
-              </div>
-            </div>
+            {pendingOrders && pendingOrders.length > 0 ? (
+              pendingOrders.map((order) => (
+                <div className="order-item" key={order._id}>
+                  <div className="order-id">#{order.orderNumber || (order._id ? order._id.slice(-4) : '---')}</div>
+                  <div className="order-info">
+                    <div className="order-customer">{order.customer?.name || 'Cliente'}</div>
+                    <div className="order-details">
+                      {order.products?.length || 0} {order.products?.length === 1 ? 'producto' : 'productos'} - {formatCurrency(order.totalAmount || order.total || 0)}
+                    </div>
+                  </div>
+                  <div className="order-date">
+                    {new Date(order.createdAt).toLocaleDateString('es-AR', { day: '2-digit', month: 'short' })}
+                  </div>
+                  <div className={`order-status ${order.status || 'pending'}`}>
+                    {order.status === 'processing' ? 'En proceso' : 'Pendiente'}
+                  </div>
+                  <div className="order-actions">
+                    <a href="/admin/orders" className="view-button">Ver</a>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p style={{ padding: '20px', color: '#777', margin: 0 }}>No hay pedidos pendientes de entrega en este momento.</p>
+            )}
           </div>
         </div>
       </div>

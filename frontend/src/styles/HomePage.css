@@ -12,6 +12,19 @@
   margin-top: 0; /* Eliminamos este margen ya que ahora lo controlamos con main-content */
 }
 
+.hero-banner { padding: 5rem 1rem; color: #541b24; background-image: radial-gradient(circle at 80% 20%, #fff9 0 12%, transparent 13%), linear-gradient(130deg,#f9d9d6,#fff3ed 60%,#edb8b8); }
+.hero-banner>.container { display:flex; align-items:center; justify-content:space-between; gap:2rem; }
+.hero-banner .hero-content { margin:0; text-align:left; }
+.hero-banner .hero-content h1 { text-shadow:none; font-family:Georgia, 'Playfair Display', serif; font-size:clamp(2.5rem,6vw,5rem); color:var(--wine-dark); }
+.hero-banner .hero-content p { text-shadow:none; color:var(--wine-subtext); max-width:580px; }
+.hero-banner .hero-actions { display:flex; gap:.75rem; flex-wrap:wrap; }
+.hero-banner .hero-image { width:min(38vw,420px); margin:0; overflow:hidden; border-radius:14px; background:#f8dfda; box-shadow:0 14px 35px #79273820; }
+.hero-banner .hero-image img { display:block; width:100%; aspect-ratio:1; object-fit:cover; }
+.hero-banner .hero-image figcaption { padding:.45rem .75rem; color:#68484a; font-size:.8rem; text-align:right; }
+.about-grid { display:flex; justify-content:center; text-align:center; }
+.about-content { max-width:700px; }
+@media(max-width:700px){.hero-banner>.container{flex-direction:column;text-align:center}.hero-banner .hero-content{text-align:center}.hero-banner .hero-actions{justify-content:center}.hero-banner .hero-image{width:min(82vw,360px)}}
+
 .hero-content {
   max-width: 800px;
   margin: 0 auto;
@@ -264,4 +277,16 @@
   .products-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.home-page .about-section .about-grid {
+  display: flex;
+  justify-content: center;
+}
+
+.home-page .about-section .about-content {
+  width: min(100%, 700px);
+  max-width: 700px;
+  margin-inline: auto;
+  text-align: center;
 }

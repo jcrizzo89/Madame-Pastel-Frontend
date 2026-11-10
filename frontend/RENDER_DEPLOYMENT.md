@@ -1,66 +1,22 @@
-# Guía de Despliegue en Render.com para Madame Pastel
+# Preview en Render
 
-Esta guía te ayudará a desplegar la aplicación web Madame Pastel en Render.com.
+El `render.yaml` de la raíz define una vista previa con dos servicios que no reemplazan el sitio existente:
 
-## Pasos para el despliegue
+- `madame-pastel-preview`: React estático, con reescritura para React Router.
+- `madame-pastel-api-preview`: API Node/Express en plan Free.
 
-### 1. Crear una cuenta en Render.com
+## Preparación
 
-- Ve a [render.com](https://render.com/) y regístrate o inicia sesión.
+1. Subir esta rama al repositorio conectado a Render.
+2. Crear un Blueprint desde el archivo `render.yaml` y revisar que los nombres indiquen `preview`.
+3. Proporcionar `MONGODB_URI` para una base MongoDB Atlas Free. Generar `JWT_SECRET` en Render; no copiar secretos al repositorio.
+4. El frontend recibirá la URL de la API del servicio. El backend recibirá la URL pública del frontend para CORS.
+5. Mercado Pago no se activa hasta configurar sus credenciales de prueba y producción como variables de entorno. El flujo actual confirma el importe por WhatsApp antes del pago.
 
-### 2. Crear un nuevo servicio para el frontend
+## Límites
 
-1. Desde el dashboard de Render, haz clic en "New" y selecciona "Static Site".
-2. Conecta tu repositorio de GitHub/GitLab o elige la opción "Upload Files" si no usas un repositorio.
-// no puede ser
-### 3. Configurar el servicio
+Render Free duerme el backend tras 15 minutos sin tráfico y puede tardar cerca de un minuto en responder cuando se reactiva. Render indica que el plan gratuito no está destinado a aplicaciones de producción. Úsalo para validar la vista previa; antes de aceptar ventas de forma sostenida, pasar el backend a un servicio siempre activo.
 
-Completa la configuración con los siguientes valores:
+MongoDB Atlas Free ofrece una base pequeña para pruebas. Revisar los límites y la configuración de acceso a red en [la documentación de Atlas](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/).
 
-- **Name**: Madame Pastel
-- **Environment**: Static Site
-- **Build Command**: `npm install && npm run build`
-- **Publish Directory**: `build`
-
-### 4. Configurar variables de entorno (si es necesario)
-
-Si necesitas variables de entorno para tu aplicación, añádelas en la sección "Environment":
-
-- `NODE_VERSION`: `18.0.0`
-- `REACT_APP_API_URL`: URL de tu backend (cuando esté desplegado)
-
-### 5. Configurar redirecciones para SPA
-
-En la sección "Redirects/Rewrites", agrega una nueva regla:
-
-- **Source**: `/*`
-- **Destination**: `/index.html`
-- **Action**: `Rewrite`
-
-Esto asegura que la navegación de React Router funcione correctamente.
-
-### 6. Completar el despliegue
-
-- Haz clic en "Create Static Site" para iniciar el proceso de despliegue.
-- Render construirá y desplegará automáticamente tu aplicación.
-- Obtendrás una URL en el formato `https://madame-pastel.onrender.com` cuando el despliegue esté completo.
-
-## Despliegue del backend (opcional)
-
-Si también necesitas desplegar el backend, sigue estos pasos:
-
-1. En el dashboard de Render, selecciona "New" > "Web Service".
-2. Configura:
-   - **Name**: Madame Pastel API
-   - **Environment**: Node
-   - **Build Command**: `npm install`
-   - **Start Command**: `npm start`
-   - **Publica las variables de entorno** necesarias para tu backend (MongoDB URI, etc.)
-
-## Mantenimiento y actualización
-
-Para actualizar tu aplicación desplegada:
-- Si usas un repositorio Git: Haz cambios en tu código y haz push a tu repositorio. Render actualizará automáticamente tu sitio.
-- Si subiste archivos manualmente: Necesitarás subir nuevamente los archivos actualizados a través del panel de Render.
-
-¡Listo! Tu aplicación Madame Pastel estará disponible públicamente en la URL proporcionada por Render.
+El blueprint no cambia la tienda que hoy está publicada. Revisar el resultado y los registros en Render antes de decidir si se reemplaza la URL actual.

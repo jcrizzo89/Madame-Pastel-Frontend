@@ -132,6 +132,9 @@
 
 .mobile-menu-button {
   display: none;
+  border: 0;
+  padding: 4px;
+  background: transparent;
   font-size: 24px;
   color: var(--text-color);
   cursor: pointer;

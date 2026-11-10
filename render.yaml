@@ -1,13 +1,49 @@
 services:
   - type: web
-    name: madame-pastel-frontend
-    env: static
-    buildCommand: npm run build
-    staticPublishPath: frontend/build
+    runtime: static
+    name: madame-pastel-preview
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: build
     envVars:
       - key: NODE_VERSION
-        value: 18.0.0
+        value: 24.22.1
+      - key: PUBLIC_URL
+        value: /
+      - key: REACT_APP_API_URL
+        fromService:
+          type: web
+          name: madame-pastel-api-preview
+          envVarKey: RENDER_EXTERNAL_URL
     routes:
       - type: rewrite
         source: /*
         destination: /index.html
+
+  - type: web
+    runtime: node
+    name: madame-pastel-api-preview
+    plan: free
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.22.1
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: madame-pastel-preview
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: BACKEND_URL
+        fromService:
+          type: web
+          name: madame-pastel-api-preview
+          envVarKey: RENDER_EXTERNAL_URL

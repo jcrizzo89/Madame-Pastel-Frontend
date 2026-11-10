@@ -7,7 +7,7 @@ const ConfigurationSchema = new mongoose.Schema({
   },
   logoUrl: {
     type: String,
-    default: '/logo-madame-pastel.png'
+    default: '/logo-madame-pastel.jpeg'
   },
   primaryColor: {
     type: String,
@@ -28,7 +28,7 @@ const ConfigurationSchema = new mongoose.Schema({
     },
     whatsapp: {
       type: String,
-      default: ''
+      default: '+5492235512021'
     }
   },
   contactInfo: {
@@ -38,7 +38,7 @@ const ConfigurationSchema = new mongoose.Schema({
     },
     email: {
       type: String,
-      default: 'info@madamepastel.com'
+      default: ''
     },
     address: {
       type: String,
@@ -49,7 +49,7 @@ const ConfigurationSchema = new mongoose.Schema({
     pickup: {
       enabled: {
         type: Boolean,
-        default: true
+        default: false
       },
       message: {
         type: String,
@@ -63,15 +63,15 @@ const ConfigurationSchema = new mongoose.Schema({
       },
       fee: {
         type: Number,
-        default: 500
+        default: 0
       },
       freeOver: {
         type: Number,
-        default: 5000
+        default: 0
       },
       message: {
         type: String,
-        default: 'Entregamos en toda la ciudad, envío gratuito para compras superiores a $5000'
+        default: 'Costo y zona de envío a confirmar por WhatsApp'
       }
     }
   },
@@ -89,7 +89,7 @@ const ConfigurationSchema = new mongoose.Schema({
       },
       accountDetails: {
         type: String,
-        default: 'Banco: | Titular: | CBU: | Alias:'
+      default: ''
       }
     },
     cashOnDelivery: {
@@ -102,11 +102,19 @@ const ConfigurationSchema = new mongoose.Schema({
   siteSettings: {
     homepageTitle: {
       type: String,
-      default: 'Madame Pastel - Deliciosas Creaciones Artesanales'
+      default: 'Madame Pastel'
     },
     homepageDescription: {
       type: String,
-      default: 'Pastelería artesanal con los mejores ingredientes y sabores únicos.'
+      default: 'Armá tu torta personalizada y coordiná el envío por WhatsApp.'
+    },
+    homepageAboutTitle: {
+      type: String,
+      default: 'Una torta hecha para tu momento'
+    },
+    homepageAboutDescription: {
+      type: String,
+      default: 'Elegí tamaño, sabor de bizcochuelo, dos rellenos y decoración. La decoración personalizada se cotiza por WhatsApp.'
     },
     metaDescription: {
       type: String,

@@ -1,0 +1,328 @@
+.custom-cake-page {
+  background: var(--pink-surface);
+  padding: 3rem 1rem 5rem;
+  color: var(--text-color);
+}
+
+.custom-cake-wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.cake-intro {
+  text-align: center;
+  margin: 0 auto 2.5rem;
+}
+
+.cake-intro h1 {
+  font-family: Georgia, 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-style: italic;
+  font-weight: 700;
+  margin: 0.6rem 0;
+  color: var(--wine-dark);
+}
+
+.cake-intro p {
+  font-size: 1.1rem;
+  color: var(--wine-subtext);
+}
+
+.cake-step {
+  padding: 1.5rem 1.8rem;
+  margin: 1.5rem 0;
+  background: #ffffff;
+  border: 1px solid var(--pink-border);
+  border-radius: 20px;
+  box-shadow: 0 4px 18px rgba(101, 33, 38, 0.05);
+}
+
+.cake-step h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0 0 1.2rem;
+  font-family: Georgia, 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--wine-heading);
+}
+
+.cake-step h2 > span {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: var(--brand-rose);
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.cake-step h2 small {
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--wine-subtext);
+}
+
+.cake-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.85rem;
+}
+
+.cake-choice {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1.5px solid #efd5d1;
+  border-radius: 16px;
+  cursor: pointer;
+  background: var(--pink-card);
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+
+.cake-choice:not(.filling-choice) {
+  padding-right: 3rem;
+}
+
+.cake-choice:not(.filling-choice) input[type="radio"] {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: auto;
+  margin: 0;
+  accent-color: var(--brand-rose);
+}
+
+.cake-choice:hover {
+  border-color: var(--brand-rose);
+  transform: translateY(-2px);
+}
+
+.cake-choice.selected {
+  border: 2px solid var(--brand-rose);
+  background: #fff0ee;
+  box-shadow: 0 2px 8px rgba(201, 72, 96, 0.12);
+}
+
+.cake-choice strong {
+  font-size: 1.05rem;
+  color: var(--text-color);
+}
+
+.cake-choice span {
+  font-size: 0.88rem;
+  color: #765c5d;
+}
+
+.cake-choice b {
+  color: var(--brand-rose);
+  font-size: 1rem;
+  margin-top: 0.2rem;
+}
+
+.filling-options {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.filling-choice {
+  flex-direction: row;
+  align-items: center;
+  min-height: 52px;
+  gap: 0.75rem;
+}
+
+.filling-choice input {
+  accent-color: var(--brand-rose);
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
+}
+
+.step-hint {
+  margin: -0.4rem 0 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--brand-rose);
+}
+
+.extra-sponge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.2rem 1.5rem;
+  background: #ffefec;
+  border: 1px solid #f8c9c2;
+  border-radius: 16px;
+  margin: 1.2rem 0;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.extra-sponge:hover {
+  background: #ffe6e2;
+}
+
+.extra-sponge input {
+  accent-color: var(--brand-rose);
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.extra-sponge b {
+  margin-left: auto;
+  color: var(--brand-rose);
+}
+
+.cake-estimate {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1.2rem 1.5rem;
+  border: 1.5px dashed var(--brand-rose);
+  border-radius: 16px;
+  background: #ffffff;
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 14px rgba(201, 72, 96, 0.08);
+}
+
+.cake-estimate span {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--wine-heading);
+}
+
+.cake-estimate strong {
+  font-size: 1.4rem;
+  color: var(--brand-rose);
+}
+
+.cake-estimate small {
+  grid-column: 1 / -1;
+  color: var(--wine-subtext);
+  font-size: 0.88rem;
+  margin-top: 0.25rem;
+}
+
+.delivery-step {
+  margin-top: 2rem;
+}
+
+.cake-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.cake-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4a282c;
+}
+
+.cake-fields input,
+.cake-fields select,
+.cake-fields textarea {
+  width: 100%;
+  border: 1px solid #e6c9c5;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font: inherit;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cake-fields input:focus,
+.cake-fields select:focus,
+.cake-fields textarea:focus {
+  outline: none;
+  border-color: var(--brand-rose);
+  box-shadow: 0 0 0 3px rgba(201, 72, 96, 0.18);
+}
+
+.field-wide {
+  grid-column: 1 / -1;
+}
+
+.cake-fields textarea {
+  min-height: 95px;
+  resize: vertical;
+}
+
+.cake-submit {
+  display: block;
+  width: min(100%, 540px);
+  margin: 2rem auto 0.6rem;
+  padding: 1.1rem 2rem;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--brand-rose);
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(201, 72, 96, 0.35);
+  text-align: center;
+}
+
+.cake-submit:hover {
+  background: var(--brand-rose-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(201, 72, 96, 0.45);
+}
+
+.cake-disclaimer {
+  text-align: center;
+  color: var(--wine-subtext);
+  font-size: 0.9rem;
+}
+
+.cake-error {
+  padding: 0.9rem 1.2rem;
+  background: #fff0ee;
+  border: 1px solid #e8b0b9;
+  color: #8b2034;
+  border-radius: 10px;
+  margin: 1.2rem 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+@media (max-width: 680px) {
+  .custom-cake-page {
+    padding: 2rem 0.75rem 3rem;
+  }
+  .cake-step {
+    padding: 1.2rem 1rem;
+    border-radius: 16px;
+  }
+  .cake-step h2 {
+    font-size: 1.2rem;
+  }
+  .cake-fields {
+    grid-template-columns: 1fr;
+  }
+  .field-wide {
+    grid-column: auto;
+  }
+  .cake-options {
+    grid-template-columns: 1fr 1fr;
+  }
+  .size-options {
+    grid-template-columns: 1fr;
+  }
+  .filling-options {
+    grid-template-columns: 1fr;
+  }
+}
