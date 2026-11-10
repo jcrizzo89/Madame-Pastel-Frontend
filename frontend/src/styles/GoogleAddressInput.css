@@ -1,0 +1,93 @@
+.google-address-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+  position: relative;
+}
+
+.google-address-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.google-address-icon {
+  position: absolute;
+  left: 0.9rem;
+  color: #c94860;
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.google-address-input {
+  width: 100%;
+  padding-left: 2.5rem !important;
+  padding-right: 2.2rem !important;
+}
+
+.google-address-clear {
+  position: absolute;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.google-address-clear:hover {
+  color: #555;
+}
+
+.google-address-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  margin-top: 0.2rem;
+}
+
+.google-address-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #2e7d32;
+  background: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+.google-address-badge.pending {
+  color: #6c757d;
+  background: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+.google-address-map-link {
+  color: #c94860;
+  text-decoration: underline;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.google-address-map-link:hover {
+  color: #a33348;
+}
+
+.google-address-hint {
+  font-size: 0.78rem;
+  color: #765c5d;
+  margin: 0;
+}

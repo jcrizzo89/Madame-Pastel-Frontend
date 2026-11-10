@@ -6,6 +6,7 @@ import { useConfig } from '../context/ConfigContext';
 import { API_URL } from '../utils/constants';
 import { buildWhatsAppOrderMessage, buildWhatsAppOrderUrl } from '../utils/whatsappOrder';
 import { formatARS } from '../data/customCake';
+import GoogleAddressInput from '../components/common/GoogleAddressInput';
 import '../styles/CheckoutPage.css';
 
 const DEFAULT_WHATSAPP = '5492235512021';
@@ -102,27 +103,55 @@ const CheckoutPage = () => {
     }
   };
 
+  const handleAddressSelect = (placeData) => {
+    setFormData((prev) => ({
+      ...prev,
+      address: placeData.address || placeData.formattedAddress || prev.address,
+      city: placeData.city || prev.city || 'Mar del Plata',
+      zipCode: placeData.zipCode || prev.zipCode
+    }));
+  };
+
+  const getMinDeliveryDate = () => {
+    // Anticipación mínima: 72 horas (3 días)
+    const target = new Date(Date.now() + 72 * 60 * 60 * 1000);
+    const year = target.getFullYear();
+    const month = String(target.getMonth() + 1).padStart(2, '0');
+    const day = String(target.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const minDeliveryDate = getMinDeliveryDate();
+
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    if (!formData.address || !formData.address.trim()) {
+      setErrorMsg('Por favor ingresá la dirección de entrega.');
+      return;
+    }
+
+    if (!formData.deliveryDate) {
+      setErrorMsg('Por favor seleccioná una fecha de entrega.');
+      return;
+    }
+
+    if (formData.deliveryDate < minDeliveryDate) {
+      setErrorMsg('La fecha solicitada debe tener una anticipación mínima de 72 hs para la elaboración artesanal de tu pedido.');
+      return;
+    }
+
+    if (formData.deliveryTime && formData.deliveryTime < '09:00') {
+      setErrorMsg('El horario de entrega debe ser a partir de las 09:00 hs. Luego coordinaremos el horario exacto según el horario de tu evento.');
+      return;
+    }
+
     if (formData.paymentMethod === 'mercadopago') {
       handleMercadoPagoPayment();
     } else {
       handleWhatsAppPayment();
     }
   };
-
-  const minDeliveryDate = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString().split('T')[0];
-
-  const fields = [
-    { name: 'name', label: 'Nombre y apellido', type: 'text', required: true },
-    { name: 'email', label: 'Correo electrónico', type: 'email', required: true },
-    { name: 'phone', label: 'Tu teléfono / WhatsApp', type: 'tel', required: true },
-    { name: 'address', label: 'Dirección de entrega', type: 'text', required: true },
-    { name: 'city', label: 'Localidad', type: 'text', required: false },
-    { name: 'zipCode', label: 'Código postal', type: 'text', required: false },
-    { name: 'deliveryDate', label: 'Fecha solicitada de entrega (mínimo 48 hs de anticipación)', type: 'date', required: true },
-    { name: 'deliveryTime', label: 'Horario preferido', type: 'time', required: false }
-  ];
 
   return (
     <div className="checkout-page container">
@@ -154,19 +183,105 @@ const CheckoutPage = () => {
           <div className="form-section">
             <h2>Datos de entrega y contacto</h2>
             <div className="checkout-fields">
-              {fields.map(({ name, label, type, required }) => (
-                <label key={name}>
-                  {label} {required && <span aria-hidden="true" style={{ color: '#c94860' }}>*</span>}
-                  <input
-                    name={name}
-                    type={type}
-                    value={formData[name]}
-                    onChange={handleChange}
-                    required={required}
-                    min={name === 'deliveryDate' ? minDeliveryDate : undefined}
-                  />
-                </label>
-              ))}
+              <label>
+                Nombre y apellido <span aria-hidden="true" style={{ color: '#c94860' }}>*</span>
+                <input
+                  name="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  placeholder="Ej: Laura Rossi"
+                />
+              </label>
+
+              <label>
+                Correo electrónico <span aria-hidden="true" style={{ color: '#c94860' }}>*</span>
+                <input
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  placeholder="tu@email.com"
+                />
+              </label>
+
+              <label>
+                Tu teléfono / WhatsApp <span aria-hidden="true" style={{ color: '#c94860' }}>*</span>
+                <input
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                  placeholder="223 555-1234"
+                />
+              </label>
+
+              <label className="checkout-wide">
+                Dirección de entrega (normalizada con Google Maps) <span aria-hidden="true" style={{ color: '#c94860' }}>*</span>
+                <GoogleAddressInput
+                  id="checkout-address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  onAddressSelect={handleAddressSelect}
+                  placeholder="Calle y altura (ej: San Martín 2450 o Guemes 3100)"
+                  required
+                />
+              </label>
+
+              <label>
+                Localidad
+                <input
+                  name="city"
+                  type="text"
+                  value={formData.city}
+                  onChange={handleChange}
+                  placeholder="Mar del Plata"
+                />
+              </label>
+
+              <label>
+                Código postal
+                <input
+                  name="zipCode"
+                  type="text"
+                  value={formData.zipCode}
+                  onChange={handleChange}
+                  placeholder="7600"
+                />
+              </label>
+
+              <label>
+                Fecha solicitada de entrega (mínimo 72 hs de anticipación) <span aria-hidden="true" style={{ color: '#c94860' }}>*</span>
+                <input
+                  name="deliveryDate"
+                  type="date"
+                  value={formData.deliveryDate}
+                  onChange={handleChange}
+                  required
+                  min={minDeliveryDate}
+                />
+                <span className="field-help">
+                  Requerimos al menos 72 hs de anticipación para elaborar artesanalmente tu pedido.
+                </span>
+              </label>
+
+              <label>
+                Horario de entrega (a partir de las 09:00 hs)
+                <input
+                  name="deliveryTime"
+                  type="time"
+                  min="09:00"
+                  value={formData.deliveryTime}
+                  onChange={handleChange}
+                />
+                <span className="field-help">
+                  A partir de las 09:00 hs. Luego coordinaremos el horario exacto según el horario de tu evento.
+                </span>
+              </label>
 
               <label>
                 Medio de pago

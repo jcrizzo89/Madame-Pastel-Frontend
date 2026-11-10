@@ -10,6 +10,7 @@ import {
   SPONGE_FLAVORS
 } from '../data/customCake';
 import { buildCustomCakeWhatsAppMessage, buildWhatsAppOrderUrl } from '../utils/whatsappOrder';
+import GoogleAddressInput from '../components/common/GoogleAddressInput';
 import '../styles/CustomCakePage.css';
 
 const DEFAULT_WHATSAPP = '5492235512021';
@@ -52,6 +53,26 @@ const CustomCakePage = () => {
     }));
   };
 
+  const handleAddressSelect = (placeData) => {
+    setCustomer((prev) => ({
+      ...prev,
+      address: placeData.address || placeData.formattedAddress || prev.address,
+      city: placeData.city || prev.city || 'Mar del Plata',
+      zipCode: placeData.zipCode || prev.zipCode
+    }));
+  };
+
+  const getMinDeliveryDate = () => {
+    // Anticipación mínima: 72 horas (3 días)
+    const target = new Date(Date.now() + 72 * 60 * 60 * 1000);
+    const year = target.getFullYear();
+    const month = String(target.getMonth() + 1).padStart(2, '0');
+    const day = String(target.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const minDeliveryDate = getMinDeliveryDate();
+
   const submit = (event) => {
     event.preventDefault();
     if (
@@ -67,23 +88,22 @@ const CustomCakePage = () => {
       setErrors('Completá tamaño, bizcochuelo, dos rellenos, decoración y los datos de envío para continuar.');
       return;
     }
+
+    if (customer.deliveryDate < minDeliveryDate) {
+      setErrors('La fecha solicitada debe tener como mínimo 72 hs de anticipación para la preparación artesanal de tu torta.');
+      return;
+    }
+
+    if (customer.deliveryTime && customer.deliveryTime < '09:00') {
+      setErrors('El horario de entrega debe ser a partir de las 09:00 hs. Luego coordinaremos el horario exacto según el horario de tu evento.');
+      return;
+    }
+
     setErrors('');
     const phone = config?.socialLinks?.whatsapp || config?.contactInfo?.phone || DEFAULT_WHATSAPP;
     const message = buildCustomCakeWhatsAppMessage({ ...selection, sizeDetails: chosenSize, customer });
     window.open(buildWhatsAppOrderUrl(phone, message), '_blank', 'noopener,noreferrer');
   };
-
-  const minDeliveryDate = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString().split('T')[0];
-
-  const deliveryFields = [
-    { name: 'name', label: 'Nombre y apellido', type: 'text', required: true },
-    { name: 'phone', label: 'Tu teléfono', type: 'tel', required: true },
-    { name: 'address', label: 'Dirección de entrega', type: 'text', required: true },
-    { name: 'city', label: 'Localidad', type: 'text', required: false },
-    { name: 'zipCode', label: 'Código postal', type: 'text', required: false },
-    { name: 'deliveryDate', label: 'Fecha solicitada (mínimo 48 hs de anticipación)', type: 'date', required: true },
-    { name: 'deliveryTime', label: 'Horario solicitado', type: 'time', required: false }
-  ];
 
   return (
     <div className="custom-cake-page">
@@ -205,19 +225,94 @@ const CustomCakePage = () => {
           <section className="cake-step delivery-step">
             <h2>Datos para el envío</h2>
             <div className="cake-fields">
-              {deliveryFields.map(({ name, label, type, required }) => (
-                <label key={name}>
-                  {label} {required && <span aria-hidden="true" style={{ color: '#c94860' }}>*</span>}
-                  <input
-                    name={name}
-                    type={type}
-                    value={customer[name]}
-                    onChange={(event) => setCustomer({ ...customer, [name]: event.target.value })}
-                    required={required}
-                    min={name === 'deliveryDate' ? minDeliveryDate : undefined}
-                  />
-                </label>
-              ))}
+              <label>
+                Nombre y apellido <span aria-hidden="true" style={{ color: '#c94860' }}>*</span>
+                <input
+                  name="name"
+                  type="text"
+                  value={customer.name}
+                  onChange={(event) => setCustomer({ ...customer, name: event.target.value })}
+                  required
+                  placeholder="Tu nombre completo"
+                />
+              </label>
+
+              <label>
+                Tu teléfono / WhatsApp <span aria-hidden="true" style={{ color: '#c94860' }}>*</span>
+                <input
+                  name="phone"
+                  type="tel"
+                  value={customer.phone}
+                  onChange={(event) => setCustomer({ ...customer, phone: event.target.value })}
+                  required
+                  placeholder="223 555-1234"
+                />
+              </label>
+
+              <label className="field-wide">
+                Dirección de entrega (normalizada con Google Maps) <span aria-hidden="true" style={{ color: '#c94860' }}>*</span>
+                <GoogleAddressInput
+                  id="cake-delivery-address"
+                  name="address"
+                  value={customer.address}
+                  onChange={(event) => setCustomer({ ...customer, address: event.target.value })}
+                  onAddressSelect={handleAddressSelect}
+                  placeholder="Calle y altura (ej: San Martín 2450 o Rawson 1340)"
+                  required
+                />
+              </label>
+
+              <label>
+                Localidad
+                <input
+                  name="city"
+                  type="text"
+                  value={customer.city}
+                  onChange={(event) => setCustomer({ ...customer, city: event.target.value })}
+                  placeholder="Mar del Plata"
+                />
+              </label>
+
+              <label>
+                Código postal
+                <input
+                  name="zipCode"
+                  type="text"
+                  value={customer.zipCode}
+                  onChange={(event) => setCustomer({ ...customer, zipCode: event.target.value })}
+                  placeholder="7600"
+                />
+              </label>
+
+              <label>
+                Fecha solicitada de entrega (mínimo 72 hs de anticipación) <span aria-hidden="true" style={{ color: '#c94860' }}>*</span>
+                <input
+                  name="deliveryDate"
+                  type="date"
+                  value={customer.deliveryDate}
+                  onChange={(event) => setCustomer({ ...customer, deliveryDate: event.target.value })}
+                  required
+                  min={minDeliveryDate}
+                />
+                <span className="field-help">
+                  Requerimos un mínimo de 72 hs de anticipación para la preparación artesanal.
+                </span>
+              </label>
+
+              <label>
+                Horario de entrega (a partir de las 09:00 hs)
+                <input
+                  name="deliveryTime"
+                  type="time"
+                  min="09:00"
+                  value={customer.deliveryTime}
+                  onChange={(event) => setCustomer({ ...customer, deliveryTime: event.target.value })}
+                />
+                <span className="field-help">
+                  A partir de las 09:00 hs. Luego se coordinará según el horario de tu evento.
+                </span>
+              </label>
+
               <label>
                 Medio de pago preferido
                 <select
@@ -229,6 +324,7 @@ const CustomCakePage = () => {
                   <option value="cashOnDelivery">Efectivo contra entrega</option>
                 </select>
               </label>
+
               <label className="field-wide">
                 Notas adicionales
                 <textarea

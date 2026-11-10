@@ -28,6 +28,16 @@ describe('WhatsApp order handoff', () => {
     expect(message).toContain('Envío: a confirmar');
     expect(message).toContain('Total final: a confirmar');
     expect(message).toContain('Tocar timbre B');
+    expect(message).toContain('15:30 hs (a coordinar según horario del evento)');
+  });
+
+  it('formats delivery time with default 9hs notice when time is empty', () => {
+    const orderNoTime = {
+      ...order,
+      formData: { ...order.formData, deliveryTime: '' }
+    };
+    const message = buildWhatsAppOrderMessage(orderNoTime);
+    expect(message).toContain('A coordinar según horario del evento (a partir de las 09:00 hs)');
   });
 
   it('builds a WhatsApp link with a country-code phone and encoded message', () => {

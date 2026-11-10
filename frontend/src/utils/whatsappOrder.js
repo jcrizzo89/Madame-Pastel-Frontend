@@ -6,6 +6,13 @@ const paymentLabels = {
   cashOnDelivery: 'Efectivo'
 };
 
+const formatDeliverySchedule = (time) => {
+  if (time && String(time).trim()) {
+    return `${time} hs (a coordinar según horario del evento)`;
+  }
+  return 'A coordinar según horario del evento (a partir de las 09:00 hs)';
+};
+
 export const buildWhatsAppOrderMessage = ({ formData, cart }) => {
   const items = cart.items
     .map(item => `• ${item.quantity} × ${item.name} — ${formatARS(item.price * item.quantity)}`)
@@ -24,7 +31,7 @@ export const buildWhatsAppOrderMessage = ({ formData, cart }) => {
     `Mi teléfono: ${formData.phone}`,
     `Dirección: ${formData.address}, ${formData.city} (${formData.zipCode})`,
     `Fecha solicitada: ${formData.deliveryDate}`,
-    `Horario solicitado: ${formData.deliveryTime}`,
+    `Horario solicitado: ${formatDeliverySchedule(formData.deliveryTime)}`,
     `Medio de pago preferido: ${paymentLabels[formData.paymentMethod] || formData.paymentMethod}`,
     formData.notes ? `Nota: ${formData.notes}` : null,
     '',
@@ -62,7 +69,7 @@ export const buildCustomCakeWhatsAppMessage = (selection) => {
     `Mi teléfono: ${selection.customer.phone}`,
     `Dirección: ${selection.customer.address}, ${selection.customer.city} (${selection.customer.zipCode})`,
     `Fecha solicitada: ${selection.deliveryDate}`,
-    `Horario solicitado: ${selection.deliveryTime}`,
+    `Horario solicitado: ${formatDeliverySchedule(selection.deliveryTime)}`,
     `Medio de pago preferido: ${paymentLabels[selection.paymentMethod] || selection.paymentMethod}`,
     selection.notes ? `Nota: ${selection.notes}` : null,
     '',

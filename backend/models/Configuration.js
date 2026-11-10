@@ -141,7 +141,7 @@ const ConfigurationSchema = new mongoose.Schema({
     },
     preOrderDays: {
       type: Number,
-      default: 2
+      default: 3
     },
     orderNotificationEmail: {
       type: String,

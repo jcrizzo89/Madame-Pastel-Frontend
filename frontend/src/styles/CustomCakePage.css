@@ -230,6 +230,14 @@
   color: #4a282c;
 }
 
+.cake-fields .field-help {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #765c5d;
+  margin-top: 0.2rem;
+  line-height: 1.3;
+}
+
 .cake-fields input,
 .cake-fields select,
 .cake-fields textarea {
