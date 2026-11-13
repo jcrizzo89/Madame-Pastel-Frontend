@@ -1,47 +1,80 @@
 # Madame Pastel
 
-Tienda de pastelería con catálogo, carrito, panel de administración y solicitudes de pedido por WhatsApp. La API está en Express/MongoDB y la web en React.
+Aplicación web para una pastelería, con catálogo de productos, carrito de compras, panel de administración y preparación de pedidos mediante WhatsApp.
 
-## Desarrollo local
+## Componentes
 
-Requisitos: Node.js 24 y MongoDB (local o Atlas).
+- **Frontend:** aplicación web desarrollada con React.
+- **Backend:** API desarrollada con Node.js y Express.
+- **Persistencia:** MongoDB.
+- **Pedidos:** el checkout prepara un mensaje con el detalle del carrito para que el negocio confirme disponibilidad, envío e importe final por WhatsApp.
 
-### Inicio rápido en Windows
-Haz doble clic en [iniciar.bat](file:///c:/Users/u610059/OneDrive%20-%20Telecom%20Argentina%20SA/Documents/Proyectos/Madame-Pastel/iniciar.bat) (o ejecútalo desde la terminal). El script se encargará automáticamente de:
-- Verificar que Node.js esté instalado.
-- Crear `frontend/.env` si no existe.
-- Instalar dependencias si faltan (`node_modules`).
-- Iniciar el **backend** (puerto 5000) y el **frontend** (puerto 3000) en terminales independientes.
+## Funcionalidades
 
-Para detener ambos servicios rápidamente, puedes cerrar las terminales o ejecutar [detener.bat](file:///c:/Users/u610059/OneDrive%20-%20Telecom%20Argentina%20SA/Documents/Proyectos/Madame-Pastel/detener.bat).
+- Catálogo de productos.
+- Carrito de compras.
+- Flujo de solicitud de pedidos por WhatsApp.
+- Panel de administración para gestionar el catálogo.
+- API para las operaciones de la aplicación.
 
-### Inicio manual
+## Requisitos
 
-1. Copiar `backend/.env.example` como `backend/.env` y completar `MONGODB_URI` y un `JWT_SECRET` largo y aleatorio.
-2. Instalar e iniciar el backend:
+- Node.js (consultar la versión compatible con las dependencias del proyecto).
+- MongoDB local o MongoDB Atlas.
+- npm.
 
-   ```powershell
+## Configuración local
+
+1. Clonar el repositorio:
+
+   ```bash
+   git clone https://github.com/jcrizzo89/Madame-Pastel-Frontend.git
+   cd Madame-Pastel-Frontend
+   ```
+
+2. Configurar las variables de entorno a partir de los archivos de ejemplo disponibles en el repositorio:
+
+   - Backend: `backend/.env.example`
+   - Frontend: `frontend/.env.example`
+
+3. Completar las variables necesarias, incluyendo la conexión a MongoDB y un secreto JWT seguro. No subir archivos `.env` ni credenciales al repositorio.
+
+4. Instalar dependencias e iniciar los servicios:
+
+   ```bash
    cd backend
    npm ci
    npm start
    ```
 
-3. Copiar `frontend/.env.example` como `frontend/.env`, instalar e iniciar la web en otra terminal:
+   En otra terminal:
 
-   ```powershell
+   ```bash
    cd frontend
    npm ci
    npm start
    ```
 
-La web queda en `http://localhost:3000` y la API en `http://localhost:5000`. El panel de administración permite cargar el catálogo real una vez creado el primer administrador.
+> Los comandos y puertos pueden variar según la configuración actual del proyecto. Revisar los scripts de `package.json` antes de ejecutar.
 
-## Pedidos
+## Flujo de pedidos
 
-El checkout prepara un mensaje con el carrito, el domicilio y el medio de pago elegido, y abre WhatsApp para que la pastelería confirme disponibilidad, envío e importe final. No se realiza un cobro automático. No ingresar precios o costos de envío estimados como si fueran definitivos.
+El checkout prepara un mensaje con los datos del carrito y abre WhatsApp para que la pastelería confirme disponibilidad, envío e importe final. No se realiza un cobro automático desde la aplicación.
 
 ## Despliegue
 
-`render.yaml` prepara dos servicios de **preview** separados en Render: sitio estático y API. Se necesita una base MongoDB Atlas y credenciales válidas antes de crear el backend. El nivel gratuito de Render es solo para pruebas; ver [la auditoría y el plan de cierre](AUDITORIA_Y_PLAN.md) y [la guía de despliegue](frontend/RENDER_DEPLOYMENT.md).
+El repositorio incluye configuración de despliegue de preview. Antes de publicar, configurar las variables de entorno, la base de datos y los servicios correspondientes. No asumir que un entorno de preview equivale a producción.
 
-La URL publicada actualmente no se modifica con este blueprint. Revisar los servicios y variables en Render y hacer una publicación explícita cuando el catálogo y el contenido comercial estén confirmados.
+## Seguridad
+
+- No compartir ni versionar secretos, tokens o archivos `.env`.
+- Utilizar variables de entorno para credenciales y configuración sensible.
+- Verificar permisos y configuración del panel administrativo antes de desplegar.
+
+## Estado
+
+Proyecto personal / de desarrollo. Las funcionalidades y el estado de despliegue deben verificarse en la versión actual del código.
+
+---
+
+Desarrollado por **Juan Cruz Rizzo**.
