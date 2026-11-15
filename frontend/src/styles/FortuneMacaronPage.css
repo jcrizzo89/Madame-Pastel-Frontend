@@ -1,0 +1,653 @@
+/* ============================================================== */
+/* ESTILOS DEL MACARON DE LA SUERTE (RITUAL DIARIO)              */
+/* ============================================================== */
+
+.fortune-page {
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(180deg, #fff9fb 0%, #fef3f6 50%, #fcf0f3 100%);
+  padding-bottom: 4rem;
+  color: #4a2c35;
+}
+
+/* Header */
+.fortune-header {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #fae2e7;
+  padding: 1.2rem 0;
+  box-shadow: 0 4px 18px rgba(184, 59, 94, 0.05);
+}
+
+.fortune-header-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.fortune-badge {
+  display: inline-block;
+  background: #fdf2f5;
+  color: #B83B5E;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #fad2db;
+  margin-bottom: 0.25rem;
+}
+
+.fortune-main-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #6A2C3E;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.fortune-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.fortune-sound-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #ffffff;
+  border: 1px solid #f0ccd5;
+  color: #6A2C3E;
+  padding: 0.45rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fortune-sound-toggle:hover {
+  background: #fdf2f4;
+  border-color: #B83B5E;
+}
+
+.fortune-switch-link {
+  display: inline-flex;
+  align-items: center;
+  background: #B83B5E;
+  color: #ffffff;
+  padding: 0.45rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.fortune-switch-link:hover {
+  background: #6A2C3E;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Contenedor central */
+.fortune-main-container {
+  max-width: 780px;
+  margin: 2rem auto 0;
+  padding: 0 1rem;
+}
+
+/* Banner de racha */
+.fortune-streak-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff8f0;
+  border: 1px solid #fde4ba;
+  border-radius: 16px;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.08);
+}
+
+.streak-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #9a3412;
+  font-size: 0.92rem;
+}
+
+.streak-fire-icon {
+  color: #ea580c;
+  font-size: 1.2rem;
+  animation: fireFlicker 1.5s infinite alternate;
+}
+
+@keyframes fireFlicker {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.15) rotate(4deg); }
+}
+
+.streak-tag {
+  background: #fef08a;
+  color: #854d0e;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+}
+
+/* Tarjeta principal */
+.fortune-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 3rem 2.2rem;
+  box-shadow: 0 14px 45px rgba(106, 44, 62, 0.09);
+  border: 1px solid #fae4e8;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* ============================================================== */
+/* 1. SELECCIÓN DEL MACARON                                       */
+/* ============================================================== */
+.fortune-intro-wrap {
+  margin-bottom: 2.2rem;
+}
+
+.fortune-subtitle-tag {
+  display: inline-block;
+  background: #fdf0f4;
+  color: #B83B5E;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 0.25rem 0.85rem;
+  border-radius: 20px;
+  margin-bottom: 0.5rem;
+}
+
+.fortune-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.2rem;
+  color: #6A2C3E;
+  margin: 0 0 0.8rem;
+  line-height: 1.25;
+}
+
+.fortune-subheading {
+  font-size: 1.05rem;
+  color: #6f555c;
+  line-height: 1.6;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+/* Caja de macarons estilo joyería parisina */
+.macarons-box-container {
+  background: linear-gradient(145deg, #fffafc 0%, #faedf1 100%);
+  border: 2px solid #ecd1d8;
+  border-radius: 24px;
+  padding: 2.5rem 1.5rem;
+  margin: 2rem auto;
+  max-width: 640px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.03), 0 10px 30px rgba(184, 59, 94, 0.08);
+  position: relative;
+}
+
+.macarons-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.macaron-item-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  padding: 0.5rem;
+  border-radius: 20px;
+}
+
+.macaron-item-btn:hover:not(:disabled) {
+  transform: translateY(-8px) scale(1.04);
+}
+
+.macaron-item-btn:hover:not(:disabled) .macaron-visual {
+  filter: drop-shadow(0 14px 20px var(--macaron-glow));
+}
+
+/* Forma 3D del Macaron */
+.macaron-visual {
+  width: 90px;
+  height: 70px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.1));
+  transition: filter 0.3s ease;
+}
+
+.macaron-shell {
+  width: 86px;
+  height: 24px;
+  border-radius: 43px / 12px;
+  background: var(--macaron-top);
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.5), inset 0 -2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.shell-bottom {
+  background: var(--macaron-bottom);
+}
+
+.macaron-filling-layer {
+  width: 76px;
+  height: 12px;
+  background: var(--macaron-fill);
+  border-radius: 38px / 6px;
+  margin: -3px 0;
+  z-index: 2;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* Animación al abrir */
+.macaron-item-btn.opening-macaron {
+  animation: macaronCrackAnim 1s ease-out forwards;
+}
+
+@keyframes macaronCrackAnim {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.2) rotate(-3deg); filter: drop-shadow(0 0 25px #FFD700); }
+  60% { transform: scale(1.25) rotate(3deg); }
+  100% { transform: scale(1.4) translateY(-10px); opacity: 0; }
+}
+
+.macaron-label-box {
+  text-align: center;
+}
+
+.macaron-name {
+  display: block;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #6A2C3E;
+  margin-bottom: 0.15rem;
+}
+
+.macaron-sub {
+  display: block;
+  font-size: 0.78rem;
+  color: #8c7178;
+}
+
+.fortune-hint-text {
+  font-size: 0.92rem;
+  color: #9a767f;
+  margin: 1rem 0 0;
+  font-style: italic;
+}
+
+/* ============================================================== */
+/* 2. REVELACIÓN DEL PERGAMINO                                    */
+/* ============================================================== */
+.fortune-revealed-view {
+  animation: unrollFade 0.6s ease-out;
+}
+
+@keyframes unrollFade {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fortune-parchment-card {
+  background: #fffdf8;
+  border: 2px solid #e8d08d;
+  border-radius: 24px;
+  padding: 2.2rem 2rem;
+  box-shadow: 0 12px 35px rgba(212, 175, 55, 0.15);
+  margin-bottom: 2rem;
+  position: relative;
+  background-image: radial-gradient(#faecd1 0.75px, transparent 0.75px);
+  background-size: 16px 16px;
+}
+
+.parchment-seal-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.seal-brand {
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #8c6b16;
+  text-transform: uppercase;
+}
+
+.seal-theme {
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: 12px;
+}
+
+.seal-star {
+  color: #d4af37;
+  font-size: 0.85rem;
+}
+
+.parchment-quote-body {
+  margin-bottom: 2rem;
+  position: relative;
+  padding: 0 1.5rem;
+}
+
+.quote-mark {
+  font-family: Georgia, serif;
+  font-size: 3.5rem;
+  color: #d4af37;
+  line-height: 0;
+  position: absolute;
+  opacity: 0.5;
+}
+
+.open-quote {
+  top: 15px;
+  left: -5px;
+}
+
+.close-quote {
+  bottom: 0px;
+  right: -5px;
+}
+
+.quote-text {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.35rem;
+  color: #53363e;
+  line-height: 1.55;
+  margin: 0 0 0.8rem;
+  font-style: italic;
+}
+
+.quote-author {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #8c6b16;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Tarjeta de beneficio */
+.parchment-reward-box {
+  background: #ffffff;
+  border: 2px dashed #d4af37;
+  border-radius: 18px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.reward-badge-tag {
+  display: inline-block;
+  background: #fef3c7;
+  color: #b45309;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  padding: 0.25rem 0.8rem;
+  border-radius: 20px;
+  margin-bottom: 0.4rem;
+}
+
+.reward-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.25rem;
+  color: #6A2C3E;
+  margin: 0 0 0.2rem;
+}
+
+.reward-discount {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #B83B5E;
+  margin: 0 0 1rem;
+}
+
+.reward-code-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #fdf5f7;
+  border: 1px solid #fad2da;
+  border-radius: 12px;
+  padding: 0.5rem 0.75rem 0.5rem 1.2rem;
+  margin-bottom: 0.6rem;
+}
+
+.reward-code-display {
+  font-family: monospace;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #6A2C3E;
+  letter-spacing: 2px;
+}
+
+.btn-copy-fortune-code {
+  background: #6A2C3E;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+}
+
+.btn-copy-fortune-code:hover {
+  background: #B83B5E;
+}
+
+.reward-terms-note {
+  display: block;
+  font-size: 0.78rem;
+  color: #8c7178;
+}
+
+/* Cuenta regresiva */
+.fortune-countdown-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: #795f66;
+  background: #fcf4ec;
+  padding: 0.65rem 1rem;
+  border-radius: 12px;
+}
+
+.countdown-icon {
+  color: #ea580c;
+}
+
+/* Botones de acción */
+.fortune-actions-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-width: 440px;
+  margin: 0 auto 2.2rem;
+}
+
+.btn-whatsapp-fortune {
+  background: #25D366;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 0.9rem 1.5rem;
+  border-radius: 25px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 0.98rem;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.28);
+  transition: all 0.2s ease;
+}
+
+.btn-whatsapp-fortune:hover {
+  background: #1fa851;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.btn-shop-fortune {
+  background: #6A2C3E;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 0.9rem 1.5rem;
+  border-radius: 25px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 0.98rem;
+  box-shadow: 0 4px 14px rgba(106, 44, 62, 0.2);
+  transition: all 0.2s ease;
+}
+
+.btn-shop-fortune:hover {
+  background: #B83B5E;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.fortune-extra-actions {
+  margin-top: 0.5rem;
+}
+
+.btn-demo-replay {
+  background: transparent;
+  border: none;
+  color: #8c7178;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.btn-demo-replay:hover {
+  color: #B83B5E;
+}
+
+/* Enlaces cruzados */
+.fortune-cross-links {
+  border-top: 1px dashed #fad0d8;
+  padding-top: 1.5rem;
+  text-align: center;
+}
+
+.fortune-cross-links p {
+  font-size: 0.88rem;
+  color: #795c65;
+  margin: 0 0 0.8rem;
+}
+
+.cross-buttons-row {
+  display: flex;
+  gap: 0.65rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.fortune-cross-btn {
+  background: #fdf0f3;
+  color: #B83B5E;
+  border: 1px solid #fad2da;
+  padding: 0.45rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.fortune-cross-btn:hover {
+  background: #B83B5E;
+  color: #ffffff;
+}
+
+/* Responsividad */
+@media (max-width: 680px) {
+  .fortune-card {
+    padding: 2rem 1.25rem;
+  }
+
+  .fortune-heading {
+    font-size: 1.7rem;
+  }
+
+  .macarons-box-container {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .macarons-row {
+    gap: 0.75rem;
+  }
+
+  .macaron-visual {
+    width: 76px;
+    height: 60px;
+  }
+
+  .macaron-shell {
+    width: 72px;
+    height: 20px;
+  }
+
+  .macaron-filling-layer {
+    width: 64px;
+    height: 10px;
+  }
+
+  .macaron-name {
+    font-size: 0.9rem;
+  }
+
+  .quote-text {
+    font-size: 1.15rem;
+  }
+}

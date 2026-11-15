@@ -8,6 +8,7 @@ import './styles/layout.css';
 // Componentes de Layout
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import ScrollToTop from './components/common/ScrollToTop';
 
 // Páginas
 import HomePage from './pages/HomePage';
@@ -21,6 +22,10 @@ import CheckoutFailurePage from './pages/CheckoutFailurePage';
 import CheckoutPendingPage from './pages/CheckoutPendingPage';
 import ContactPage from './pages/ContactPage';
 import CustomCakePage from './pages/CustomCakePage';
+import CakeStudioPage from './pages/CakeStudioPage';
+import TriviaPage from './pages/TriviaPage';
+import PersonalityQuizPage from './pages/PersonalityQuizPage';
+import FortuneMacaronPage from './pages/FortuneMacaronPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 // Importación diferida (lazy load) de rutas de administrador para no sobrecargar el bundle de la tienda pública
@@ -31,6 +36,7 @@ function App() {
     <ConfigProvider>
       <CartProvider>
         <Router>
+          <ScrollToTop />
           <div className="App">
             {/* Contenido principal del sitio (solo se muestra si no estamos en rutas de admin) */}
             <Routes>
@@ -69,6 +75,10 @@ function App() {
                       <Route path="/productos/:id" element={<ProductDetailPage />} />
                       <Route path="/promociones" element={<PromotionsPage />} />
                       <Route path="/armar-torta" element={<CustomCakePage />} />
+                      <Route path="/crea-tu-pastel" element={<CakeStudioPage />} />
+                      <Route path="/trivia" element={<TriviaPage />} />
+                      <Route path="/que-dulce-sos" element={<PersonalityQuizPage />} />
+                      <Route path="/macaron-de-la-suerte" element={<FortuneMacaronPage />} />
                       <Route path="/carrito" element={<CartPage />} />
                       <Route path="/checkout" element={<CheckoutPage />} />
                       <Route path="/checkout/success" element={<CheckoutSuccessPage />} />

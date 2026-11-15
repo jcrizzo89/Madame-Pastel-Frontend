@@ -71,15 +71,20 @@ const ProductDetailPage = () => {
     });
   };
 
+  const hasStockLimit = typeof product.stock === 'number' && product.stock >= 0;
+  const isOutOfStock = hasStockLimit && product.stock <= 0;
+
   const handleAddToCart = () => {
-    addToCart({
-      ...product,
-      id: product._id || product.id,
-      price: discountedPrice,
-      originalPrice: isOnPromotion ? rawPrice : undefined,
-      isOnPromotion,
+    addToCart(
+      {
+        ...product,
+        id: product._id || product.id,
+        price: discountedPrice,
+        originalPrice: isOnPromotion ? rawPrice : undefined,
+        isOnPromotion
+      },
       quantity
-    });
+    );
   };
 
   return (
@@ -92,10 +97,10 @@ const ProductDetailPage = () => {
         <div className="product-detail-container">
           <div className="product-image-container">
             <img
-              className="product-image-bg"
+              className="product-detail-image"
               src={product.image || '/logo-madame-pastel.jpeg'}
               alt={product.name}
-              loading="lazy"
+              loading="eager"
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = '/logo-madame-pastel.jpeg';
@@ -120,15 +125,15 @@ const ProductDetailPage = () => {
                 isOnPromotion ? (
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
                     <span className="original-price" style={{ textDecoration: 'line-through', color: '#888', fontSize: '1.1rem' }}>
-                      ${formatPrice(rawPrice)}
+                      {product.madeToOrder ? 'Desde ' : ''}${formatPrice(rawPrice)}
                     </span>
                     <span className="discount-price" style={{ color: 'var(--accent-color, #c94860)', fontSize: '1.6rem', fontWeight: 700 }}>
-                      ${formatPrice(discountedPrice)}
+                      {product.madeToOrder ? 'Desde ' : ''}${formatPrice(discountedPrice)}
                     </span>
                   </div>
                 ) : (
                   <span className="current-price" style={{ fontSize: '1.6rem', fontWeight: 700 }}>
-                    ${formatPrice(rawPrice)}
+                    {product.madeToOrder ? 'Desde ' : ''}${formatPrice(rawPrice)}
                   </span>
                 )
               ) : (
@@ -138,7 +143,11 @@ const ProductDetailPage = () => {
 
             <div className="product-description">{product.description}</div>
 
-            {(product.ingredients?.length > 0 || product.allergens?.length > 0 || product.preparationTime) && (
+            {Boolean(
+              (product.ingredients && product.ingredients.length > 0) ||
+              (product.allergens && product.allergens.length > 0) ||
+              (typeof product.preparationTime === 'number' && product.preparationTime > 0)
+            ) && (
               <div className="product-meta">
                 {product.ingredients?.length > 0 && (
                   <div className="meta-item">
@@ -150,18 +159,20 @@ const ProductDetailPage = () => {
                     </ul>
                   </div>
                 )}
-                <div className="meta-item">
-                  {product.preparationTime && (
-                    <p>
-                      <strong>Preparación:</strong> {product.preparationTime} horas
-                    </p>
-                  )}
-                  {product.allergens?.length > 0 && (
-                    <p>
-                      <strong>Alérgenos:</strong> {product.allergens.join(', ')}
-                    </p>
-                  )}
-                </div>
+                {(Boolean(typeof product.preparationTime === 'number' && product.preparationTime > 0) || product.allergens?.length > 0) && (
+                  <div className="meta-item">
+                    {Boolean(typeof product.preparationTime === 'number' && product.preparationTime > 0) && (
+                      <p>
+                        <strong>Preparación:</strong> {product.preparationTime} horas
+                      </p>
+                    )}
+                    {product.allergens?.length > 0 && (
+                      <p>
+                        <strong>Alérgenos:</strong> {product.allergens.join(', ')}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
@@ -181,7 +192,7 @@ const ProductDetailPage = () => {
                     type="button"
                     className="quantity-btn"
                     onClick={() => setQuantity((value) => Math.max(1, value - 1))}
-                    disabled={quantity <= 1}
+                    disabled={isOutOfStock || quantity <= 1}
                     aria-label="Restar una unidad"
                   >
                     <FaMinus aria-hidden="true" />
@@ -190,7 +201,8 @@ const ProductDetailPage = () => {
                   <button
                     type="button"
                     className="quantity-btn"
-                    onClick={() => setQuantity((value) => value + 1)}
+                    onClick={() => setQuantity((value) => (hasStockLimit ? Math.min(product.stock, value + 1) : value + 1))}
+                    disabled={isOutOfStock || (hasStockLimit && quantity >= product.stock)}
                     aria-label="Sumar una unidad"
                   >
                     <FaPlus aria-hidden="true" />

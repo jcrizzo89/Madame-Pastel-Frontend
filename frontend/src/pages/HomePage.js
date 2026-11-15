@@ -74,7 +74,7 @@ const HomePage = () => {
           </div>
           <figure className="hero-image">
             <img
-              src="/images/torta-personalizada-ilustrativa.png"
+              src={config?.siteSettings?.homepageHeroImage || '/images/torta-personalizada-ilustrativa.png'}
               alt="Torta personalizada artesanal Madame Pastel"
               loading="lazy"
               onError={(e) => {
@@ -125,6 +125,41 @@ const HomePage = () => {
           </div>
         </section>
       )}
+
+      {/* Banner interactivo: Espacio de Juegos & Tests Sensoriales */}
+      <section className="section cake-game-teaser-section">
+        <div className="container cake-game-teaser-wrap">
+          <div className="cake-game-teaser-text">
+            <span className="game-teaser-badge">✨ Experiencias & Juegos Interactivos</span>
+            <h2>Descubrí tu Dulce Gemelo o Creá tu Pastel</h2>
+            <p>
+              Hacé el nuevo <strong>Test de Personalidad</strong> para saber qué postre refleja tu esencia y descargar tu historia de Instagram,
+              diseñá tu torta con macarons en el <strong>Taller Creativo</strong>, o desafiá tu mente con la <strong>Trivia de 15 segundos</strong>.
+              ¡Todas las experiencias te premian con cupones de regalo!
+            </p>
+            <div className="game-teaser-actions">
+              <Link to="/macaron-de-la-suerte" className="btn btn-game-primary">
+                🥠 Macaron de la Suerte
+              </Link>
+              <Link to="/que-dulce-sos" className="btn btn-game-secondary">
+                🍓 ¿Qué Dulce Sos?
+              </Link>
+              <Link to="/crea-tu-pastel" className="btn btn-game-secondary">
+                🎂 Diseñar Pastel
+              </Link>
+              <Link to="/trivia" className="btn btn-game-secondary">
+                🎯 Trivia (15s)
+              </Link>
+            </div>
+          </div>
+          <div className="cake-game-teaser-visual" aria-hidden="true">
+            <div className="game-floating-cake">
+              <span className="floating-cake-emoji">🍓</span>
+              <div className="floating-badge-award">🎁 Cupones & Historias</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="section about-section">
         <div className="container about-grid">

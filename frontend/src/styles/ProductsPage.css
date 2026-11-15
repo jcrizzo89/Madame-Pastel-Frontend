@@ -3,7 +3,7 @@
 }
 
 .products-banner {
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://via.placeholder.com/1920x400');
+  background-color: #541b24;
   background-size: cover;
   background-position: center;
   color: white;

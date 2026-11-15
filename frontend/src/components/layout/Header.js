@@ -11,6 +11,7 @@ const Header = () => {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [gamesDropdownOpen, setGamesDropdownOpen] = useState(false);
 
   // Controlar el cambio de estilo al hacer scroll
   useEffect(() => {
@@ -25,13 +26,29 @@ const Header = () => {
   // Cerrar menú móvil al cambiar de página
   useEffect(() => {
     setMobileMenuOpen(false);
+    setGamesDropdownOpen(false);
   }, [location]);
+
+  // Manejar click en pestaña/enlace: si ya estamos en esa página, hacer scroll suave al inicio
+  const handleNavClick = (targetPath) => {
+    const isCurrentPage =
+      location.pathname === targetPath ||
+      (targetPath === '/productos' && location.pathname.startsWith('/productos'));
+
+    if (isCurrentPage) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+    setMobileMenuOpen(false);
+  };
 
   return (
     <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
       <div className="container header-container">
         <div className="logo">
-          <Link to="/" aria-label="Madame Pastel - Ir al inicio">
+          <Link to="/" onClick={() => handleNavClick('/')} aria-label="Madame Pastel - Ir al inicio">
             {config?.logoUrl ? (
               <img
                 src={config.logoUrl}
@@ -61,13 +78,18 @@ const Header = () => {
         <nav className={`navigation ${mobileMenuOpen ? 'mobile-open' : ''}`} aria-label="Menú principal">
           <ul>
             <li>
-              <Link to="/" className={location.pathname === '/' ? 'active' : ''}>
+              <Link
+                to="/"
+                onClick={() => handleNavClick('/')}
+                className={location.pathname === '/' ? 'active' : ''}
+              >
                 Inicio
               </Link>
             </li>
             <li>
               <Link
                 to="/productos"
+                onClick={() => handleNavClick('/productos')}
                 className={location.pathname.startsWith('/productos') ? 'active' : ''}
               >
                 Productos
@@ -76,14 +98,78 @@ const Header = () => {
             <li>
               <Link
                 to="/armar-torta"
+                onClick={() => handleNavClick('/armar-torta')}
                 className={location.pathname === '/armar-torta' ? 'active' : ''}
               >
                 Armá tu torta
               </Link>
             </li>
+            <li
+              className="nav-dropdown-item"
+              onMouseEnter={() => setGamesDropdownOpen(true)}
+              onMouseLeave={() => setGamesDropdownOpen(false)}
+            >
+              <button
+                type="button"
+                className={`nav-dropdown-trigger ${
+                  ['/crea-tu-pastel', '/trivia', '/que-dulce-sos', '/macaron-de-la-suerte'].includes(location.pathname)
+                    ? 'active'
+                    : ''
+                }`}
+                onClick={() => setGamesDropdownOpen((prev) => !prev)}
+                aria-expanded={gamesDropdownOpen}
+                aria-haspopup="true"
+              >
+                <span>🎮 Juegos & Tests</span>
+                <span className="nav-dropdown-caret">▾</span>
+              </button>
+              <ul className={`nav-dropdown-menu ${gamesDropdownOpen ? 'show' : ''}`}>
+                <li>
+                  <Link
+                    to="/macaron-de-la-suerte"
+                    onClick={() => handleNavClick('/macaron-de-la-suerte')}
+                    className={location.pathname === '/macaron-de-la-suerte' ? 'active' : ''}
+                  >
+                    <span className="dropdown-link-main">🥠 Macaron de la Suerte</span>
+                    <span className="dropdown-subtag">Ritual & beneficio diario</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/que-dulce-sos"
+                    onClick={() => handleNavClick('/que-dulce-sos')}
+                    className={location.pathname === '/que-dulce-sos' ? 'active' : ''}
+                  >
+                    <span className="dropdown-link-main">🍓 ¿Qué Dulce Sos?</span>
+                    <span className="dropdown-subtag">Test de personalidad</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/crea-tu-pastel"
+                    onClick={() => handleNavClick('/crea-tu-pastel')}
+                    className={location.pathname === '/crea-tu-pastel' ? 'active' : ''}
+                  >
+                    <span className="dropdown-link-main">🎂 Diseñá tu Pastel</span>
+                    <span className="dropdown-subtag">Taller creativo</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/trivia"
+                    onClick={() => handleNavClick('/trivia')}
+                    className={location.pathname === '/trivia' ? 'active' : ''}
+                  >
+                    <span className="dropdown-link-main">🎯 Trivia Pastelera</span>
+                    <span className="dropdown-subtag">Desafío 15s</span>
+                  </Link>
+                </li>
+              </ul>
+            </li>
             <li>
               <Link
                 to="/promociones"
+                onClick={() => handleNavClick('/promociones')}
                 className={location.pathname === '/promociones' ? 'active' : ''}
               >
                 Promociones
@@ -92,6 +178,7 @@ const Header = () => {
             <li>
               <Link
                 to="/contacto"
+                onClick={() => handleNavClick('/contacto')}
                 className={location.pathname === '/contacto' ? 'active' : ''}
               >
                 Contacto
@@ -127,6 +214,7 @@ const Header = () => {
 
           <Link
             to="/carrito"
+            onClick={() => handleNavClick('/carrito')}
             className="cart-icon"
             aria-label={`Carrito de compras (${cart.totalItems} ${cart.totalItems === 1 ? 'producto' : 'productos'})`}
           >

@@ -120,6 +120,46 @@ const ConfigurationSchema = new mongoose.Schema({
       type: String,
       default: 'Madame Pastel - Pastelería artesanal en Mar del Plata. Tortas, cupcakes, macarons y más.'
     },
+    homepageHeroImage: {
+      type: String,
+      default: '/images/torta-personalizada-ilustrativa.png'
+    },
+    productsBannerImage: {
+      type: String,
+      default: '/images/products-banner.jpg'
+    },
+    productsBannerTitle: {
+      type: String,
+      default: 'Nuestros productos'
+    },
+    productsBannerSubtitle: {
+      type: String,
+      default: 'Consultá disponibilidad y coordiná el envío por WhatsApp.'
+    },
+    promotionsBannerImage: {
+      type: String,
+      default: '/images/promotions-banner.jpg'
+    },
+    promotionsBannerTitle: {
+      type: String,
+      default: 'Promociones Especiales'
+    },
+    promotionsBannerSubtitle: {
+      type: String,
+      default: 'Aprovechá nuestras ofertas y promociones exclusivas en pastelería artesanal'
+    },
+    contactBannerImage: {
+      type: String,
+      default: '/images/contact-banner.jpg'
+    },
+    contactBannerTitle: {
+      type: String,
+      default: 'Contáctanos'
+    },
+    contactBannerSubtitle: {
+      type: String,
+      default: 'Estamos aquí para responder tus consultas y crear algo delicioso para ti'
+    },
     featuredCategories: {
       type: [String],
       default: []

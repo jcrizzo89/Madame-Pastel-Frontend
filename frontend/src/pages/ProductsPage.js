@@ -2,14 +2,20 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ProductCard from '../components/products/ProductCard';
 import { API_URL, PLACEHOLDER_IMAGES } from '../utils/constants';
+import { useConfig } from '../context/ConfigContext';
 import '../styles/ProductsPage.css';
 
 export default function ProductsPage() {
+  const { config } = useConfig();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [category, setCategory] = useState('todos');
   const [search, setSearch] = useState('');
+
+  const bannerImage = config?.siteSettings?.productsBannerImage || '/images/products-banner.jpg';
+  const bannerTitle = config?.siteSettings?.productsBannerTitle || 'Nuestros productos';
+  const bannerSubtitle = config?.siteSettings?.productsBannerSubtitle || 'Consultá disponibilidad y coordiná el envío por WhatsApp.';
 
   useEffect(() => {
     let active = true;
@@ -59,10 +65,15 @@ export default function ProductsPage() {
 
   return (
     <div className="products-page">
-      <div className="products-banner">
+      <div
+        className="products-banner"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url("${bannerImage}")`
+        }}
+      >
         <div className="container">
-          <h1>Nuestros productos</h1>
-          <p>Consultá disponibilidad y coordiná el envío por WhatsApp.</p>
+          <h1>{bannerTitle}</h1>
+          <p>{bannerSubtitle}</p>
         </div>
       </div>
 

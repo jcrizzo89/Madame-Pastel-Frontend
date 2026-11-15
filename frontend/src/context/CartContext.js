@@ -131,10 +131,23 @@ export const CartProvider = ({ children }) => {
   }, [state]);
   
   // Funciones de utilidad
-  const addToCart = (product, quantity = 1) => {
+  const addToCart = (product, quantity) => {
+    let resolvedQuantity = 1;
+    if (quantity !== undefined && quantity !== null) {
+      const parsed = Number(quantity);
+      if (!Number.isNaN(parsed) && parsed > 0) {
+        resolvedQuantity = parsed;
+      }
+    } else if (product && product.quantity !== undefined && product.quantity !== null) {
+      const parsed = Number(product.quantity);
+      if (!Number.isNaN(parsed) && parsed > 0) {
+        resolvedQuantity = parsed;
+      }
+    }
+
     dispatch({
       type: 'ADD_ITEM',
-      payload: { ...product, quantity }
+      payload: { ...product, quantity: resolvedQuantity }
     });
   };
   

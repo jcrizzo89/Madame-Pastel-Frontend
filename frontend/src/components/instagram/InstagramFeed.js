@@ -14,19 +14,19 @@ const DEFAULT_POSTS = [
     id: 'post-2',
     caption: 'Torta personalizada con buttercream y flores artesanales.',
     date: 'Destacados',
-    image: '/images/placeholders/product-600x400.jpg'
+    image: '/images/products/cheesecake-frutos-rojos.jpg'
   },
   {
     id: 'post-3',
     caption: 'Mini tartas y porciones individuales para tu mesa dulce.',
     date: 'Novedades',
-    image: '/images/placeholders/instagram-300x300.jpg'
+    image: '/images/products/torta-marquise.jpg'
   },
   {
     id: 'post-4',
     caption: 'Letter cake con doble relleno de dulce de leche y frutos del bosque.',
     date: 'A pedido',
-    image: '/images/placeholders/product-300x300.jpg'
+    image: '/images/products/chocotorta-especial.jpg'
   }
 ];
 

@@ -1,6 +1,6 @@
 /* Hero Section */
 .hero-section {
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://via.placeholder.com/1920x1080');
+  background: #541b24;
   background-size: cover;
   background-position: center;
   height: 80vh;
@@ -290,3 +290,163 @@
   margin-inline: auto;
   text-align: center;
 }
+
+/* Banner Teaser Minijuego Crea tu Pastel */
+.cake-game-teaser-section {
+  padding: 3.5rem 1rem;
+  background: linear-gradient(135deg, #FFF0F4 0%, #FFF8F5 50%, #FDEBF0 100%);
+  border-top: 1px solid #F6DCE2;
+  border-bottom: 1px solid #F6DCE2;
+  margin: 2rem 0;
+}
+
+.cake-game-teaser-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.cake-game-teaser-text {
+  flex: 1.2;
+}
+
+.game-teaser-badge {
+  display: inline-block;
+  background-color: #B83B5E;
+  color: #FFFFFF;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.35rem 0.9rem;
+  border-radius: 50px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 6px rgba(184, 59, 94, 0.2);
+}
+
+.cake-game-teaser-text h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.2rem;
+  color: #6A2C3E;
+  margin: 0 0 0.8rem;
+  line-height: 1.2;
+}
+
+.cake-game-teaser-text p {
+  font-size: 1.05rem;
+  color: #6B5551;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.btn-game-primary {
+  background: linear-gradient(135deg, #B83B5E 0%, #D85A7E 100%) !important;
+  color: #FFFFFF !important;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 6px 16px rgba(184, 59, 94, 0.3);
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-game-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(184, 59, 94, 0.4);
+}
+
+.btn-game-secondary {
+  background: #ffffff;
+  color: #6A2C3E !important;
+  border: 2px solid #ecd1d7;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(106, 44, 62, 0.08);
+  text-decoration: none;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-game-secondary:hover {
+  border-color: #B83B5E;
+  color: #B83B5E !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(184, 59, 94, 0.18);
+}
+
+.game-teaser-actions {
+  display: flex;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .game-teaser-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.cake-game-teaser-visual {
+  flex: 0.8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-floating-cake {
+  position: relative;
+  background: radial-gradient(circle, #FFFDF8 0%, #FFEBEF 80%);
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 12px 30px rgba(184, 59, 94, 0.15);
+  border: 4px solid #FFFFFF;
+}
+
+.floating-cake-emoji {
+  font-size: 6rem;
+  animation: floatCake 3s ease-in-out infinite alternate;
+}
+
+@keyframes floatCake {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-10px) rotate(4deg); }
+}
+
+.floating-badge-award {
+  position: absolute;
+  bottom: 15px;
+  background: #6A2C3E;
+  color: #FFD700;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .cake-game-teaser-wrap {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
+
+  .cake-game-teaser-text h2 {
+    font-size: 1.8rem;
+  }
+}
+

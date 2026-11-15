@@ -108,10 +108,13 @@ const ContactPage = () => {
   };
 
   const primaryColor = config?.primaryColor || 'var(--primary-color)';
+  const bannerImage = config?.siteSettings?.contactBannerImage || '/images/contact-banner.jpg';
+  const bannerTitle = config?.siteSettings?.contactBannerTitle || 'Contáctanos';
+  const bannerSubtitle = config?.siteSettings?.contactBannerSubtitle || 'Estamos aquí para responder tus consultas y crear algo delicioso para ti';
 
   const styles = {
     banner: {
-      backgroundColor: config?.secondaryColor || 'var(--secondary-color)'
+      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url("${bannerImage}")`
     },
     button: config?.primaryColor
       ? { backgroundColor: config.primaryColor, borderColor: config.primaryColor }
@@ -128,8 +131,8 @@ const ContactPage = () => {
     <div className="contact-page">
       <div className="contact-banner" style={styles.banner}>
         <div className="container">
-          <h1>Contáctanos</h1>
-          <p>Estamos aquí para responder tus consultas y crear algo delicioso para ti</p>
+          <h1>{bannerTitle}</h1>
+          <p>{bannerSubtitle}</p>
         </div>
       </div>
 

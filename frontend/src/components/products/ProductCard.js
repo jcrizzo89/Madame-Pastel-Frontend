@@ -107,11 +107,11 @@ const ProductCard = ({ product }) => {
           <div className="product-price">
             {isOnPromotion ? (
               <>
-                <span className="original-price">${formatPrice(product.price)}</span>
-                <span className="discount-price">${formatPrice(discountedPrice)}</span>
+                <span className="original-price">{product.madeToOrder ? 'Desde ' : ''}${formatPrice(product.price)}</span>
+                <span className="discount-price">{product.madeToOrder ? 'Desde ' : ''}${formatPrice(discountedPrice)}</span>
               </>
             ) : (
-              <span className="current-price">${formatPrice(product.price)}</span>
+              <span className="current-price">{product.madeToOrder ? 'Desde ' : ''}${formatPrice(product.price)}</span>
             )}
           </div>
         </div>

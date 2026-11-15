@@ -1,11 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useConfig } from '../../context/ConfigContext';
 import { FaInstagram, FaWhatsapp, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 import './Footer.css';
 
 const Footer = () => {
   const { config } = useConfig();
+  const location = useLocation();
+
+  const handleLinkClick = (targetPath) => {
+    const isCurrentPage =
+      location.pathname === targetPath ||
+      (targetPath === '/productos' && location.pathname.startsWith('/productos'));
+
+    if (isCurrentPage) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
   
   return (
     <footer className="footer">
@@ -42,11 +56,11 @@ const Footer = () => {
           <div className="footer-section">
             <h3 className="footer-title">Enlaces</h3>
             <ul className="footer-links">
-              <li><Link to="/">Inicio</Link></li>
-              <li><Link to="/productos">Productos</Link></li>
-              <li><Link to="/armar-torta">Armá tu torta</Link></li>
-              <li><Link to="/promociones">Promociones</Link></li>
-              <li><Link to="/contacto">Contacto</Link></li>
+              <li><Link to="/" onClick={() => handleLinkClick('/')}>Inicio</Link></li>
+              <li><Link to="/productos" onClick={() => handleLinkClick('/productos')}>Productos</Link></li>
+              <li><Link to="/armar-torta" onClick={() => handleLinkClick('/armar-torta')}>Armá tu torta</Link></li>
+              <li><Link to="/promociones" onClick={() => handleLinkClick('/promociones')}>Promociones</Link></li>
+              <li><Link to="/contacto" onClick={() => handleLinkClick('/contacto')}>Contacto</Link></li>
             </ul>
           </div>
 

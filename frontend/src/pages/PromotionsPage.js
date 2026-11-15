@@ -2,13 +2,19 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { API_URL, PLACEHOLDER_IMAGES } from '../utils/constants';
+import { useConfig } from '../context/ConfigContext';
 import ProductCard from '../components/products/ProductCard';
 import '../styles/PromotionsPage.css';
 
 const PromotionsPage = () => {
+  const { config } = useConfig();
   const [promotions, setPromotions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const bannerImage = config?.siteSettings?.promotionsBannerImage || '/images/promotions-banner.jpg';
+  const bannerTitle = config?.siteSettings?.promotionsBannerTitle || 'Promociones Especiales';
+  const bannerSubtitle = config?.siteSettings?.promotionsBannerSubtitle || 'Aprovechá nuestras ofertas y promociones exclusivas en pastelería artesanal';
 
   const fetchPromotions = useCallback(async () => {
     try {
@@ -50,10 +56,15 @@ const PromotionsPage = () => {
 
   return (
     <div className="promotions-page">
-      <div className="promotions-banner">
+      <div
+        className="promotions-banner"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url("${bannerImage}")`
+        }}
+      >
         <div className="container">
-          <h1>Promociones Especiales</h1>
-          <p>Aprovechá nuestras ofertas y promociones exclusivas en pastelería artesanal</p>
+          <h1>{bannerTitle}</h1>
+          <p>{bannerSubtitle}</p>
         </div>
       </div>
 
