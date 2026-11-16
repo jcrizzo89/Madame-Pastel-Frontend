@@ -2,14 +2,38 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { API_URL, PLACEHOLDER_IMAGES } from '../utils/constants';
+import { getCachedProductsSnapshot } from '../utils/productCache';
 import { useConfig } from '../context/ConfigContext';
 import ProductCard from '../components/products/ProductCard';
 import '../styles/PromotionsPage.css';
 
+const formatPromotionProduct = (product) => ({
+  ...product,
+  id: product._id,
+  _id: product._id,
+  name: product.name,
+  description: product.description || '',
+  price: product.price,
+  image: product.image || PLACEHOLDER_IMAGES.PRODUCT_SMALL,
+  category: product.category,
+  isPromotion: true,
+  discountPercentage: product.discountPercentage || 0,
+  inStock: product.stock > 0 || product.madeToOrder,
+  madeToOrder: product.madeToOrder,
+  customCakeSizeId: product.customCakeSizeId
+});
+
 const PromotionsPage = () => {
   const { config } = useConfig();
-  const [promotions, setPromotions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const initialSnapshot = getCachedProductsSnapshot();
+  const [promotions, setPromotions] = useState(() =>
+    initialSnapshot
+      ? initialSnapshot
+          .filter((item) => item.isPromotion || item.seasonalPromotion)
+          .map(formatPromotionProduct)
+      : []
+  );
+  const [loading, setLoading] = useState(() => !initialSnapshot);
   const [error, setError] = useState(null);
 
   const bannerImage = config?.siteSettings?.promotionsBannerImage || '/images/promotions-banner.jpg';
@@ -18,33 +42,22 @@ const PromotionsPage = () => {
 
   const fetchPromotions = useCallback(async () => {
     try {
-      setLoading(true);
+      if (!getCachedProductsSnapshot()) {
+        setLoading(true);
+      }
       setError(null);
       const response = await axios.get(`${API_URL}/products/promotions`);
 
       if (response.data && response.data.length > 0) {
-        const formattedPromotions = response.data.map((product) => ({
-          ...product,
-          id: product._id,
-          _id: product._id,
-          name: product.name,
-          description: product.description || '',
-          price: product.price,
-          image: product.image || PLACEHOLDER_IMAGES.PRODUCT_SMALL,
-          category: product.category,
-          isPromotion: true,
-          discountPercentage: product.discountPercentage || 0,
-          inStock: product.stock > 0 || product.madeToOrder,
-          madeToOrder: product.madeToOrder,
-          customCakeSizeId: product.customCakeSizeId
-        }));
-        setPromotions(formattedPromotions);
+        setPromotions(response.data.map(formatPromotionProduct));
       } else {
         setPromotions([]);
       }
     } catch (err) {
       console.error('Error fetching promotions:', err);
-      setError('No pudimos cargar las promociones en este momento. Por favor, intentá nuevamente.');
+      if (!getCachedProductsSnapshot()) {
+        setError('No pudimos cargar las promociones en este momento. Por favor, intentá nuevamente.');
+      }
     } finally {
       setLoading(false);
     }

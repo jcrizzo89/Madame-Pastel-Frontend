@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../utils/constants';
+import { fetchProductsWithCache } from '../utils/productCache';
 
 // Crear el contexto
 const ConfigContext = createContext();
@@ -28,9 +29,10 @@ export const ConfigProvider = ({ children }) => {
     }
   };
 
-  // Cargar la configuración al montar el componente
+  // Cargar la configuración al montar el componente y pre-cargar productos en segundo plano
   useEffect(() => {
     fetchConfig();
+    fetchProductsWithCache().catch(() => {});
   }, []);
 
   // Función para recargar la configuración (útil después de actualizaciones)

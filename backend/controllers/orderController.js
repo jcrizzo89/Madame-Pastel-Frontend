@@ -1,6 +1,7 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const Inventory = require('../models/Inventory');
+const { clearCache } = require('../middleware/cacheMiddleware');
 const mongoose = require('mongoose');
 
 // Obtener todos los pedidos
@@ -107,6 +108,7 @@ exports.createOrder = async (req, res) => {
       }
     }
     
+    clearCache(['/api/products']);
     res.status(201).json(savedOrder);
   } catch (error) {
     if (savedOrder?._id) await Order.deleteOne({ _id: savedOrder._id }).catch(() => {});
@@ -220,6 +222,7 @@ exports.cancelOrder = async (req, res) => {
       }
     }
     
+    clearCache(['/api/products']);
     res.status(200).json(order);
   } catch (error) {
     res.status(500).json({ message: 'Error al cancelar el pedido', error: error.message });

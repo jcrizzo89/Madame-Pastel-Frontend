@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../../utils/constants';
+import { invalidateClientProductsCache } from '../../utils/productCache';
 import '../../styles/admin/ProductsPage.css';
 
 const ProductsPage = () => {
@@ -165,6 +166,8 @@ const ProductsPage = () => {
         setCategories([...categories, productData.category]);
       }
       
+      invalidateClientProductsCache();
+      
       // Cerrar modal
       setShowModal(false);
       
@@ -186,6 +189,7 @@ const ProductsPage = () => {
         
         // Actualizar la lista de productos
         setProducts(products.filter(p => p._id !== productId));
+        invalidateClientProductsCache();
         
         // Mostrar mensaje de éxito
         alert('Producto eliminado con éxito');

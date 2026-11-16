@@ -4,24 +4,34 @@ import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { FaShoppingCart, FaMinus, FaPlus, FaArrowLeft } from 'react-icons/fa';
 import { API_URL } from '../utils/constants';
+import { getCachedProductById } from '../utils/productCache';
 import '../styles/ProductDetailPage.css';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
   const { addToCart } = useCart();
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const cachedProduct = getCachedProductById(id);
+  const [product, setProduct] = useState(() => cachedProduct);
+  const [loading, setLoading] = useState(() => !cachedProduct);
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     let active = true;
+    const fromCache = getCachedProductById(id);
+    if (fromCache) {
+      setProduct(fromCache);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+
     axios
       .get(`${API_URL}/products/${id}`)
       .then(({ data }) => {
         if (active) setProduct(data);
       })
       .catch(() => {
-        if (active) setProduct(null);
+        if (active && !fromCache) setProduct(null);
       })
       .finally(() => {
         if (active) setLoading(false);

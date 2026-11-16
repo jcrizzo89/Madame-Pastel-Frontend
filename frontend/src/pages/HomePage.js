@@ -1,45 +1,63 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import { useConfig } from '../context/ConfigContext';
-import { API_URL, PLACEHOLDER_IMAGES } from '../utils/constants';
+import { PLACEHOLDER_IMAGES } from '../utils/constants';
+import {
+  fetchProductsWithCache,
+  getCachedProductsSnapshot,
+  isProductsCacheFresh
+} from '../utils/productCache';
 import ProductCard from '../components/products/ProductCard';
 import InstagramFeed from '../components/instagram/InstagramFeed';
 import '../styles/HomePage.css';
 
+const mapHomeProduct = (item) => ({
+  id: item._id,
+  _id: item._id,
+  name: item.name,
+  description: item.description || '',
+  price: item.price,
+  image: item.image || PLACEHOLDER_IMAGES.PRODUCT_SMALL,
+  category: item.category,
+  inStock: item.stock > 0 || item.madeToOrder,
+  madeToOrder: item.madeToOrder,
+  customCakeSizeId: item.customCakeSizeId,
+  isPromotion: item.isPromotion,
+  discountPercentage: item.discountPercentage
+});
+
 const HomePage = () => {
-  const [products, setProducts] = useState([]);
-  const [promotions, setPromotions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const initialSnapshot = getCachedProductsSnapshot();
+  const [products, setProducts] = useState(() =>
+    initialSnapshot ? initialSnapshot.filter((item) => item.featured).map(mapHomeProduct) : []
+  );
+  const [promotions, setPromotions] = useState(() =>
+    initialSnapshot ? initialSnapshot.filter((item) => item.isPromotion).map(mapHomeProduct) : []
+  );
+  const [loading, setLoading] = useState(() => !initialSnapshot);
   const [error, setError] = useState(false);
   const { config } = useConfig();
 
   useEffect(() => {
     let active = true;
-    axios
-      .get(`${API_URL}/products`)
-      .then(({ data }) => {
-        if (!active) return;
-        const mapProduct = (item) => ({
-          id: item._id,
-          _id: item._id,
-          name: item.name,
-          description: item.description || '',
-          price: item.price,
-          image: item.image || PLACEHOLDER_IMAGES.PRODUCT_SMALL,
-          category: item.category,
-          inStock: item.stock > 0 || item.madeToOrder,
-          madeToOrder: item.madeToOrder,
-          customCakeSizeId: item.customCakeSizeId,
-          isPromotion: item.isPromotion,
-          discountPercentage: item.discountPercentage
-        });
+    const hasFreshCache = isProductsCacheFresh();
 
-        setProducts(data.filter((item) => item.featured).map(mapProduct));
-        setPromotions(data.filter((item) => item.isPromotion).map(mapProduct));
+    if (hasFreshCache) {
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
+
+    fetchProductsWithCache()
+      .then((data) => {
+        if (!active) return;
+        setProducts(data.filter((item) => item.featured).map(mapHomeProduct));
+        setPromotions(data.filter((item) => item.isPromotion).map(mapHomeProduct));
+        setError(false);
       })
       .catch(() => {
-        if (active) setError(true);
+        if (active && !getCachedProductsSnapshot()) setError(true);
       })
       .finally(() => {
         if (active) setLoading(false);

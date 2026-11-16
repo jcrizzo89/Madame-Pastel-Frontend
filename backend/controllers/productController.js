@@ -1,5 +1,10 @@
 const Product = require('../models/Product');
 const Inventory = require('../models/Inventory');
+const { clearCache } = require('../middleware/cacheMiddleware');
+
+const invalidateProductCache = () => {
+  clearCache(['/api/products']);
+};
 
 // Obtener todos los productos
 exports.getProducts = async (req, res) => {
@@ -55,6 +60,7 @@ exports.createProduct = async (req, res) => {
       }
     }
     
+    invalidateProductCache();
     res.status(201).json(savedProduct);
   } catch (error) {
     res.status(500).json({ message: 'Error al crear el producto', error: error.message });
@@ -96,6 +102,7 @@ exports.updateProduct = async (req, res) => {
       }
     }
     
+    invalidateProductCache();
     res.status(200).json(updatedProduct);
   } catch (error) {
     res.status(500).json({ message: 'Error al actualizar el producto', error: error.message });
@@ -113,6 +120,7 @@ exports.deleteProduct = async (req, res) => {
     // Eliminar también el registro de inventario asociado
     await Inventory.findOneAndDelete({ product: req.params.id });
     
+    invalidateProductCache();
     res.status(200).json({ message: 'Producto eliminado correctamente' });
   } catch (error) {
     res.status(500).json({ message: 'Error al eliminar el producto', error: error.message });

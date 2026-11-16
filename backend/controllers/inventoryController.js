@@ -1,5 +1,6 @@
 const Inventory = require('../models/Inventory');
 const Product = require('../models/Product');
+const { clearCache } = require('../middleware/cacheMiddleware');
 
 // Obtener todo el inventario
 exports.getInventory = async (req, res) => {
@@ -63,6 +64,7 @@ exports.updateInventory = async (req, res) => {
     // Actualizar el stock del producto
     product.stock = inventory.currentStock;
     await product.save();
+    clearCache(['/api/products']);
     
     res.status(200).json(inventory);
   } catch (error) {
@@ -97,6 +99,7 @@ exports.restockInventory = async (req, res) => {
       product.stock = inventory.currentStock;
       await product.save();
     }
+    clearCache(['/api/products']);
     
     res.status(200).json(inventory);
   } catch (error) {

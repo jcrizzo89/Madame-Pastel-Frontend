@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../../utils/constants';
+import { invalidateClientProductsCache } from '../../utils/productCache';
 import '../../styles/admin/InventoryPage.css';
 
 const InventoryPage = () => {
@@ -171,6 +172,7 @@ const InventoryPage = () => {
       );
       
       setShowModal(false);
+      invalidateClientProductsCache();
       
       // Mostrar mensaje de éxito
       alert('Inventario actualizado correctamente');

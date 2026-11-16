@@ -1,14 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import ProductCard from '../components/products/ProductCard';
-import { API_URL, PLACEHOLDER_IMAGES } from '../utils/constants';
+import { PLACEHOLDER_IMAGES } from '../utils/constants';
+import {
+  fetchProductsWithCache,
+  getCachedProductsSnapshot,
+  isProductsCacheFresh
+} from '../utils/productCache';
 import { useConfig } from '../context/ConfigContext';
 import '../styles/ProductsPage.css';
 
+const mapCatalogProduct = (item) => ({
+  id: item._id,
+  _id: item._id,
+  name: item.name,
+  price: item.price,
+  category: item.category,
+  description: item.description || '',
+  image: item.image || PLACEHOLDER_IMAGES.PRODUCT_SMALL,
+  inStock: item.stock > 0 || item.madeToOrder,
+  madeToOrder: item.madeToOrder,
+  customCakeSizeId: item.customCakeSizeId,
+  isPromotion: item.isPromotion,
+  discountPercentage: item.discountPercentage
+});
+
 export default function ProductsPage() {
   const { config } = useConfig();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const initialSnapshot = getCachedProductsSnapshot();
+  const [products, setProducts] = useState(() =>
+    initialSnapshot ? initialSnapshot.map(mapCatalogProduct) : []
+  );
+  const [loading, setLoading] = useState(() => !initialSnapshot);
   const [error, setError] = useState(false);
   const [category, setCategory] = useState('todos');
   const [search, setSearch] = useState('');
@@ -19,29 +41,22 @@ export default function ProductsPage() {
 
   useEffect(() => {
     let active = true;
-    axios
-      .get(`${API_URL}/products`)
-      .then(({ data }) => {
+
+    if (isProductsCacheFresh()) {
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
+
+    fetchProductsWithCache()
+      .then((data) => {
         if (!active) return;
-        setProducts(
-          data.map((item) => ({
-            id: item._id,
-            _id: item._id,
-            name: item.name,
-            price: item.price,
-            category: item.category,
-            description: item.description || '',
-            image: item.image || PLACEHOLDER_IMAGES.PRODUCT_SMALL,
-            inStock: item.stock > 0 || item.madeToOrder,
-            madeToOrder: item.madeToOrder,
-            customCakeSizeId: item.customCakeSizeId,
-            isPromotion: item.isPromotion,
-            discountPercentage: item.discountPercentage
-          }))
-        );
+        setProducts(data.map(mapCatalogProduct));
+        setError(false);
       })
       .catch(() => {
-        if (active) setError(true);
+        if (active && !getCachedProductsSnapshot()) setError(true);
       })
       .finally(() => {
         if (active) setLoading(false);

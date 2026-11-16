@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { API_URL } from '../../utils/constants';
+import { invalidateClientProductsCache } from '../../utils/productCache';
 import '../../styles/admin/PromotionsPage.css';
 
 const PromotionsPage = () => {
@@ -169,6 +170,8 @@ const PromotionsPage = () => {
         toast.success('Promoción creada exitosamente');
       }
       
+      invalidateClientProductsCache();
+      
       // Cerrar modal
       setShowModal(false);
     } catch (error) {
@@ -202,6 +205,7 @@ const PromotionsPage = () => {
         prevPromotions.filter(promo => promo._id !== promotionId)
       );
       
+      invalidateClientProductsCache();
       toast.success('Promoción eliminada exitosamente');
     } catch (error) {
       console.error('Error al eliminar la promoción:', error);
