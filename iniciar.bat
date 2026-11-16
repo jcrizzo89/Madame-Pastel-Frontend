@@ -63,13 +63,13 @@ if "%FRONTEND_PORT%" neq "3000" (
 echo.
 
 echo [1/2] Iniciando Servidor Backend (API en puerto %BACKEND_PORT%)...
-start "Madame Pastel - Backend (API :%BACKEND_PORT%)" /D "%ROOT_DIR%backend" cmd /k "set PORT=%BACKEND_PORT%&& set FRONTEND_URL=http://localhost:%FRONTEND_PORT%&& echo Servidor Backend corriendo en http://localhost:%BACKEND_PORT% ... && npm start"
+start "Madame Pastel Backend" /D "%ROOT_DIR%backend" cmd /k "title Madame Pastel Backend&& set PORT=%BACKEND_PORT%&& set FRONTEND_URL=http://localhost:%FRONTEND_PORT%&& echo ========================================================&& echo             MADAME PASTEL - BACKEND (API)&& echo ========================================================&& echo Servidor Backend corriendo en http://localhost:%BACKEND_PORT% ...&& echo.&& npm start"
 
 :: Pausa de 3 segundos para permitir que el backend inicie primero
 ping -n 4 127.0.0.1 >nul
 
 echo [2/2] Iniciando Servidor Frontend (React en puerto %FRONTEND_PORT%)...
-start "Madame Pastel - Frontend (:%FRONTEND_PORT%)" /D "%ROOT_DIR%frontend" cmd /k "set PORT=%FRONTEND_PORT%&& set REACT_APP_API_URL=http://localhost:%BACKEND_PORT%&& echo Servidor Frontend corriendo en http://localhost:%FRONTEND_PORT% ... && npm start"
+start "Madame Pastel Frontend" /D "%ROOT_DIR%frontend" cmd /k "title Madame Pastel Frontend&& set PORT=%FRONTEND_PORT%&& set REACT_APP_API_URL=http://localhost:%BACKEND_PORT%&& echo ========================================================&& echo             MADAME PASTEL - FRONTEND (WEB)&& echo ========================================================&& echo Servidor Frontend corriendo en http://localhost:%FRONTEND_PORT% ...&& echo.&& npm start"
 
 echo.
 echo ========================================================
